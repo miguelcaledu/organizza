@@ -1,0 +1,75 @@
+/* ============================================================
+   Casa da Lapa — Spacing, Radius, Shadow, Layout Tokens
+   ------------------------------------------------------------
+   Architectural calm: generous whitespace, restrained radii
+   (stone is square — corners are barely softened), and soft
+   low-contrast shadows rather than heavy drop shadows.
+   ============================================================ */
+
+:root {
+  /* ---- Spacing scale (4px base) ---- */
+  --space-0:   0;
+  --space-1:   0.25rem;  /* 4 */
+  --space-2:   0.5rem;   /* 8 */
+  --space-3:   0.75rem;  /* 12 */
+  --space-4:   1rem;     /* 16 */
+  --space-5:   1.5rem;   /* 24 */
+  --space-6:   2rem;     /* 32 */
+  --space-7:   3rem;     /* 48 */
+  --space-8:   4rem;     /* 64 */
+  --space-9:   6rem;     /* 96 */
+  --space-10:  8rem;     /* 128 */
+  --space-11:  12rem;    /* 192 */
+
+  /* ---- Section rhythm ---- */
+  --section-y:       var(--space-10);
+  --section-y-tight: var(--space-9);
+  --gutter:          var(--space-5);
+
+  /* ---- Container widths ---- */
+  --container-sm:  640px;
+  --container-md:  840px;
+  --container-lg:  1140px;
+  --container-xl:  1320px;
+  --measure:       66ch;   /* optimal reading line length */
+
+  /* ---- Radii (square stone, lightly eased) ---- */
+  --radius-none: 0;
+  --radius-xs:   2px;
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   14px;
+  --radius-xl:   22px;
+  --radius-pill: 999px;
+
+  /* ---- Borders ---- */
+  --border-width: 1px;
+  --border-thick: 1.5px;
+
+  /* ---- Shadows (soft, warm, low-contrast) ---- */
+  --shadow-xs: 0 1px 2px rgba(35,43,48,0.06);
+  --shadow-sm: 0 2px 8px rgba(35,43,48,0.06);
+  --shadow-md: 0 8px 24px rgba(35,43,48,0.08);
+  --shadow-lg: 0 18px 48px rgba(35,43,48,0.12);
+  --shadow-image: 0 24px 60px rgba(26,25,23,0.18);
+
+  /* ---- Protection gradient (over photography for legible text) ---- */
+  --scrim-bottom: linear-gradient(to top, rgba(26,25,23,0.72) 0%, rgba(26,25,23,0.32) 38%, rgba(26,25,23,0) 72%); /* @kind other */
+  --scrim-full:   linear-gradient(to top, rgba(26,25,23,0.66), rgba(26,25,23,0.18)); /* @kind other */
+
+  /* ---- Motion (calm, slow, no bounce) ---- */
+  --ease-out:  cubic-bezier(0.22, 0.61, 0.36, 1); /* @kind other */
+  --ease-in-out: cubic-bezier(0.45, 0.05, 0.55, 0.95); /* @kind other */
+  --dur-fast:   140ms; /* @kind other */
+  --dur-base:   240ms; /* @kind other */
+  --dur-slow:   420ms; /* @kind other */
+  --dur-image:  720ms; /* @kind other */
+
+  /* ---- Z-index ---- */
+  --z-base:    1; /* @kind other */
+  --z-raised:  10; /* @kind other */
+  --z-sticky:  100; /* @kind other */
+  --z-overlay: 1000; /* @kind other */
+  --z-modal:   1100; /* @kind other */
+  --z-toast:   1200; /* @kind other */
+}

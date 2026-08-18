@@ -1,0 +1,54 @@
+/* ============================================================
+   Casa da Lapa — Typography Tokens
+   ------------------------------------------------------------
+   One geometric voice (Neutraface Text). Display set is wide
+   tracking + tight leading for architectural, editorial titles;
+   body is generous and calm. Headings use UPPERCASE with letter-
+   spacing for the lettering feel of the brand mark.
+   ============================================================ */
+
+:root {
+  /* ---- Families ---- */
+  --font-display: 'Neutraface Text', 'Century Gothic', 'Futura', system-ui, sans-serif;
+  --font-body:    'Neutraface Text', 'Century Gothic', system-ui, sans-serif;
+  --font-mono:    'Spline Sans Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* ---- Weights ---- */
+  --weight-light:   300;
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold:600;
+  --weight-bold:    700;
+
+  /* ---- Fluid type scale (1.250 major-third, paper-first) ---- */
+  --text-xs:   0.75rem;   /* 12px — labels, captions */
+  --text-sm:   0.875rem;  /* 14px — fine print */
+  --text-base: 1rem;      /* 16px — body */
+  --text-md:   1.125rem;  /* 18px — lead body */
+  --text-lg:   1.375rem;  /* 22px */
+  --text-xl:   1.75rem;   /* 28px */
+  --text-2xl:  2.25rem;   /* 36px */
+  --text-3xl:  3rem;      /* 48px */
+  --text-4xl:  4rem;       /* 64px — hero */
+  --text-5xl:  5.5rem;     /* 88px — display */
+
+  /* ---- Line heights ---- */
+  --leading-none:    1;
+  --leading-tight:   1.08;
+  --leading-snug:    1.22;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.7;
+
+  /* ---- Letter-spacing ---- */
+  --tracking-tight:  -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.04em;
+  --tracking-wider:  0.12em;   /* eyebrow / lettering */
+  --tracking-widest: 0.22em;   /* logo-style labels */
+
+  /* ---- Semantic roles ---- */
+  --display-weight:  var(--weight-light);
+  --heading-weight:  var(--weight-regular);
+  --eyebrow-weight:  var(--weight-medium);
+  --body-weight:     var(--weight-regular);
+}

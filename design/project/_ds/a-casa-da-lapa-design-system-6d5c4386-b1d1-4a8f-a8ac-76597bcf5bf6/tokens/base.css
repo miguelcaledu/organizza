@@ -1,0 +1,75 @@
+/* ============================================================
+   Casa da Lapa — Base elements & shared utilities
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: var(--body-weight);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-body);
+  background: var(--color-canvas);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--terra-200); color: var(--basalt-900); }
+
+a { color: inherit; text-decoration: none; }
+
+img { display: block; max-width: 100%; }
+
+/* ---- Display / heading helpers ---- */
+.cdl-display {
+  font-family: var(--font-display);
+  font-weight: var(--display-weight);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-strong);
+  margin: 0;
+}
+.cdl-heading {
+  font-family: var(--font-display);
+  font-weight: var(--heading-weight);
+  line-height: var(--leading-snug);
+  color: var(--text-strong);
+  margin: 0;
+}
+
+/* ---- Eyebrow: the brand "lettering" tic — uppercase, tracked ---- */
+.cdl-eyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--eyebrow-weight);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+  color: var(--color-brand);
+  margin: 0;
+}
+.cdl-eyebrow--muted { color: var(--text-muted); }
+
+.cdl-lead {
+  font-size: var(--text-md);
+  line-height: var(--leading-relaxed);
+  color: var(--text-body);
+  max-width: var(--measure);
+}
+
+/* ---- Layout helpers ---- */
+.cdl-container { max-width: var(--container-lg); margin-inline: auto; padding-inline: var(--gutter); }
+.cdl-stack > * + * { margin-top: var(--space-4); }
+
+/* ---- Focus ---- */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}

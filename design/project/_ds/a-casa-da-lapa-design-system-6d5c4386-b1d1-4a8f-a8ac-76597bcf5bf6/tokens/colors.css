@@ -1,0 +1,102 @@
+/* ============================================================
+   Casa da Lapa — Color Tokens
+   ------------------------------------------------------------
+   Sampled from the brand mark + architectural project:
+     • Volcanic Stone Grey  #78858C  (slate of the basalt walls)
+     • Terracotta / "vermelho seco"  #D9705E  (window frames,
+       red volcanic soil of the courtyard)
+   Secondaries drawn from the setting: forest of Mata da Serreta,
+   the Atlantic, warm lime-washed interiors, basalt black.
+   ============================================================ */
+
+:root {
+  /* ---- Stone (primary neutral — slate grey of the façade) ---- */
+  --stone-50:  #F5F6F6;
+  --stone-100: #ECEEEF;
+  --stone-200: #D9DDDE;
+  --stone-300: #BCC3C5;
+  --stone-400: #9AA4A8;
+  --stone-500: #78858C;   /* brand grey */
+  --stone-600: #5E6B72;
+  --stone-700: #47535A;
+  --stone-800: #333D43;
+  --stone-900: #232B30;
+
+  /* ---- Terracotta (primary accent — dry red / soil) ---- */
+  --terra-50:  #FBEDE9;
+  --terra-100: #F7E0D9;
+  --terra-200: #EFC4B9;
+  --terra-300: #E5A697;
+  --terra-400: #DD8978;
+  --terra-500: #D9705E;   /* brand terracotta */
+  --terra-600: #C25A48;
+  --terra-700: #9E4A3B;
+  --terra-800: #7A3A30;
+
+  /* ---- Warm paper / lime-wash off-whites ---- */
+  --paper:        #F4F0E9;  /* warm off-white — primary canvas */
+  --paper-deep:   #EAE4D8;  /* sand — alternating sections */
+  --paper-warm:   #FBF9F4;  /* lightest, near-white surface */
+
+  /* ---- Forest (Mata da Serreta) ---- */
+  --forest-700: #2C3A2E;
+  --forest-600: #3B4D3A;
+  --forest-500: #4F6249;
+
+  /* ---- Ocean (Atlantic) ---- */
+  --ocean-700: #2B414E;
+  --ocean-600: #3A5A6B;
+  --ocean-500: #517385;
+
+  /* ---- Basalt black (warm near-black volcanic rock) ---- */
+  --basalt-900: #1A1917;
+  --basalt-800: #262421;
+
+  /* ---- Sunset orange (accent — only for moments of warmth) ---- */
+  --sunset-500: #E07B3C;
+  --sunset-400: #E8965E;
+
+  /* ---- Pure ---- */
+  --white: #FFFFFF;
+  --black: #000000;
+
+  /* =========================================================
+     SEMANTIC ALIASES — author against these, not raw scales
+     ========================================================= */
+
+  /* Surfaces & backgrounds */
+  --color-canvas:        var(--paper);
+  --color-canvas-alt:    var(--paper-deep);
+  --color-surface:       var(--paper-warm);
+  --color-surface-raised: var(--white);
+  --color-inverse:       var(--basalt-900);
+
+  /* Text / ink */
+  --text-strong:  var(--basalt-900);
+  --text-body:    var(--stone-700);
+  --text-muted:   var(--stone-500);
+  --text-faint:   var(--stone-400);
+  --text-on-dark:        var(--paper);
+  --text-on-dark-muted:  var(--stone-300);
+
+  /* Brand */
+  --color-brand:        var(--terra-500);
+  --color-brand-hover:  var(--terra-600);
+  --color-brand-press:  var(--terra-700);
+  --color-brand-tint:   var(--terra-50);
+
+  /* Lines & borders */
+  --border-hairline: rgba(35,43,48,0.10);
+  --border-soft:     rgba(35,43,48,0.16);
+  --border-strong:   var(--stone-700);
+  --border-on-dark:  rgba(244,240,233,0.18);
+
+  /* Feedback */
+  --color-success: var(--forest-500);
+  --color-info:    var(--ocean-600);
+  --color-warning: var(--sunset-500);
+  --color-danger:  var(--terra-700);
+
+  /* Focus ring */
+  --focus-ring: var(--terra-500);
+}

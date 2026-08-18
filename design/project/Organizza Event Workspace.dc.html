@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="./image-slot.js"></script>
+  <style>
+    body { margin: 0; background: #FAF8F5; }
+    * { box-sizing: border-box; }
+    input::placeholder { color: #A8A199; }
+    :focus-visible { outline: 2px solid #8A9A7B; outline-offset: 2px; }
+  </style>
+</helmet>
+
+<div style="font-family:'Inter',sans-serif; color:#1C1A17; background:#FAF8F5; width:1440px;">
+
+  <!-- ===== PART ONE: Design System Reference Strip ===== -->
+  <section style="padding:24px 40px; border-bottom:1px solid #E8E3DC;">
+    <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#A8A199; margin-bottom:16px;">Referência do sistema · Organizza</div>
+    <div style="display:flex; gap:32px; align-items:flex-start; flex-wrap:wrap;">
+
+      <div>
+        <div style="font-size:11px; color:#A8A199; margin-bottom:8px;">Cor</div>
+        <div style="display:grid; grid-template-columns:repeat(5, 56px); gap:8px;">
+          <div><div style="width:56px;height:40px;border-radius:4px;background:#FAF8F5;border:1px solid #E8E3DC;"></div><div style="font-size:9px;color:#6B655D;margin-top:3px;">Canvas</div></div>
+          <div><div style="width:56px;height:40px;border-radius:4px;background:#FFFFFF;border:1px solid #E8E3DC;"></div><div style="font-size:9px;color:#6B655D;margin-top:3px;">Surface</div></div>
+          <div><div style="width:56px;height:40px;border-radius:4px;background:#1C1A17;"></div><div style="font-size:9px;color:#6B655D;margin-top:3px;">Ink</div></div>
+          <div><div style="width:56px;height:40px;border-radius:4px;background:#8A9A7B;"></div><div style="font-size:9px;color:#6B655D;margin-top:3px;">Sage</div></div>
+          <div><div style="width:56px;height:40px;border-radius:4px;background:#C4703F;"></div><div style="font-size:9px;color:#6B655D;margin-top:3px;">Terracota</div></div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px; color:#A8A199; margin-bottom:8px;">Tipo</div>
+        <div style="display:flex; flex-direction:column; gap:2px;">
+          <div style="font-family:'Fraunces',serif; font-size:22px; font-weight:500;">Aa Evento</div>
+          <div style="font-size:13px; color:#6B655D;">Aa texto de interface</div>
+          <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#A8A199;">Aa eyebrow</div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px; color:#A8A199; margin-bottom:8px;">Botões</div>
+        <div style="display:flex; gap:8px;">
+          <button style-hover="background:#7C8C6E;" style="background:#8A9A7B; color:#fff; border:none; border-radius:4px; padding:8px 14px; font-size:13px; font-family:inherit; font-weight:500; cursor:pointer; transition:background 180ms ease-out;">Primário</button>
+          <button style-hover="background:#8A9A7B14;" style="background:#FFFFFF; color:#1C1A17; border:1px solid #E8E3DC; border-radius:4px; padding:8px 14px; font-size:13px; font-family:inherit; font-weight:500; cursor:pointer; transition:background 180ms ease-out;">Secundário</button>
+          <button style-hover="color:#1C1A17;" style="background:transparent; color:#6B655D; border:none; border-radius:4px; padding:8px 14px; font-size:13px; font-family:inherit; font-weight:500; cursor:pointer; transition:color 180ms ease-out;">Ghost</button>
+          <button style-hover="background:#B05A32;" style="background:#C4703F; color:#fff; border:none; border-radius:4px; padding:8px 14px; font-size:13px; font-family:inherit; font-weight:500; cursor:pointer; transition:background 180ms ease-out;">Destrutivo</button>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px; color:#A8A199; margin-bottom:8px;">Estados</div>
+        <div style="display:flex; gap:6px;">
+          <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:#B8A88A;background:#B8A88A1A;border-radius:100px;padding:4px 10px;">Planeamento</div>
+          <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:#8A9A7B;background:#8A9A7B1A;border-radius:100px;padding:4px 10px;">Produção</div>
+          <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:#C4703F;background:#C4703F1A;border-radius:100px;padding:4px 10px;">Em curso</div>
+          <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:#A8A199;background:#A8A1991A;border-radius:100px;padding:4px 10px;">Concluído</div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px; color:#A8A199; margin-bottom:8px;">Campo</div>
+        <div style="border:1px solid #E8E3DC; border-radius:4px; padding:8px 10px; width:160px; font-size:13px; color:#A8A199; background:#fff;">Pesquisar…</div>
+      </div>
+
+      <div>
+        <div style="font-size:11px; color:#A8A199; margin-bottom:8px;">Avatares</div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <div style="width:20px;height:20px;border-radius:50%;background:#8A9A7B1F;color:#8A9A7B;font-size:8px;font-weight:600;display:flex;align-items:center;justify-content:center;">AC</div>
+          <div style="width:32px;height:32px;border-radius:50%;background:#C4703F1F;color:#C4703F;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;">MF</div>
+          <div style="width:44px;height:44px;border-radius:50%;background:#B8A88A1F;color:#B8A88A;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;">RP</div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px; color:#A8A199; margin-bottom:8px;">Upload</div>
+        <div style="border:1px dashed #E8E3DC; border-radius:4px; width:150px; height:60px; display:flex; align-items:center; justify-content:center; font-size:11px; color:#A8A199; text-align:center;">Arraste ficheiros</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== PART TWO: Event Workspace ===== -->
+  <div style="display:flex;">
+
+    <aside style="width:240px; flex-shrink:0; border-right:1px solid #E8E3DC; display:flex; flex-direction:column; padding:24px 16px; gap:32px;">
+      <div style="font-family:'Fraunces',serif; font-size:19px; font-weight:500;">Organizza</div>
+      <nav style="display:flex; flex-direction:column; gap:4px;">
+        <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="6">
+          <div onClick="{{ item.onClick }}" style-hover="background:#8A9A7B10;" style="{{ item.style }}">
+            <span style="flex-shrink:0; display:flex;" dangerously-set-inner-h-t-m-l="{{ item.icon }}"></span>
+            <span style="white-space:nowrap;">{{ item.label }}</span>
+          </div>
+        </sc-for>
+      </nav>
+    </aside>
+
+    <main style="flex:1; min-width:0;">
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 40px; border-bottom:1px solid #E8E3DC;">
+        <div style="display:flex; align-items:center; gap:8px; background:#FFFFFF; border:1px solid #E8E3DC; border-radius:4px; padding:8px 12px; width:280px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8A199" stroke-width="1.8"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input placeholder="Pesquisar" style="border:none; outline:none; font-size:13px; font-family:inherit; width:100%; background:transparent; color:#1C1A17;"></input>
+        </div>
+        <div style="display:flex; align-items:center; gap:20px;">
+          <div style="font-size:13px; color:#6B655D;">Sexta-feira, 7 de agosto de 2026</div>
+          <div style="position:relative; display:flex;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B655D" stroke-width="1.6"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.7 21a2 2 0 01-3.4 0"></path></svg>
+            <div style="position:absolute; top:-2px; right:-2px; width:6px; height:6px; border-radius:50%; background:#C4703F;"></div>
+          </div>
+          <div style="position:relative;">
+            <div onClick="{{ toggleProfileMenu }}" style="width:30px;height:30px;border-radius:50%;background:#8A9A7B1F;color:#8A9A7B;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;cursor:pointer;">{{ profileInitials }}</div>
+            <sc-if value="{{ profileMenuOpen }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ closeProfileMenu }}" style="position:fixed; inset:0; z-index:40;"></div>
+              <div style="position:absolute; top:38px; right:0; width:220px; background:#FFFFFF; border:1px solid #E8E3DC; border-radius:8px; box-shadow:0 8px 24px rgba(28,26,23,0.10); z-index:50; overflow:hidden;">
+                <div style="padding:14px 16px; border-bottom:1px solid #F1EEE8;">
+                  <div style="font-size:13px; font-weight:500;">{{ profileName }}</div>
+                  <div style="font-size:12px; color:#A8A199;">{{ profileEmail }}</div>
+                </div>
+                <div onClick="{{ goToSettings }}" style-hover="background:#FAF8F5;" style="padding:10px 16px; font-size:13px; cursor:pointer;">Definições</div>
+                <div onClick="{{ logout }}" style-hover="background:#FAF8F5;" style="padding:10px 16px; font-size:13px; color:#C4703F; cursor:pointer; border-top:1px solid #F1EEE8;">Terminar sessão</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+
+      <div style="position:relative; height:280px; width:100%;">
+        <image-slot id="event-cover" shape="rect" placeholder="{{ eventCoverPlaceholder }}"></image-slot>
+        <div style="position:absolute; inset:0; background:rgba(196,112,63,0.04); pointer-events:none;"></div>
+        <div style="position:absolute; inset:0; background:linear-gradient(180deg, rgba(28,26,23,0) 30%, rgba(28,26,23,0.72) 100%); pointer-events:none;"></div>
+        <div style="position:absolute; left:40px; bottom:24px; right:40px; pointer-events:none;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+            <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:#fff;background:{{ eventStatusColor }};border-radius:100px;padding:4px 12px;">{{ eventStatus }}</div>
+          </div>
+          <div style="font-family:'Fraunces',serif; font-weight:500; font-size:34px; color:#FFFFFF; margin-bottom:10px;">{{ eventName }}</div>
+          <div style="display:flex; gap:24px; flex-wrap:wrap;">
+            <div style="font-size:13px; color:#F4F0E9; display:flex; align-items:center; gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F4F0E9" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="1"></rect><line x1="3" y1="9" x2="21" y2="9"></line></svg>18 de outubro de 2026</div>
+            <div style="font-size:13px; color:#F4F0E9; display:flex; align-items:center; gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F4F0E9" stroke-width="1.8"><path d="M12 21s-7-6.5-7-11a7 7 0 1114 0c0 4.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Quinta de Sintra</div>
+            <div style="font-size:13px; color:#F4F0E9; display:flex; align-items:center; gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F4F0E9" stroke-width="1.8"><circle cx="9" cy="8" r="3"></circle><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"></path><path d="M17 8a3 3 0 010 6"></path></svg>180 convidados</div>
+            <div style="font-size:13px; color:#F4F0E9; display:flex; align-items:center; gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#F4F0E9" stroke-width="1.8"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"></path></svg>Gestora: Ana Costa</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:4px; padding:0 40px; border-bottom:1px solid #E8E3DC;">
+        <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="6">
+          <button onClick="{{ tab.onClick }}" style="{{ tab.style }}">{{ tab.label }}</button>
+        </sc-for>
+      </div>
+
+      <div style="padding:32px 40px 60px;">
+
+        <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid; grid-template-columns:1.1fr 0.9fr; gap:40px;">
+            <div>
+              <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#A8A199; margin-bottom:14px;">Serviços contratados</div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:32px;">
+                <sc-for list="{{ services }}" as="svc" hint-placeholder-count="8">
+                  <div style="{{ svc.style }}">{{ svc.label }}</div>
+                </sc-for>
+              </div>
+              <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#A8A199; margin-bottom:14px;">Detalhes do evento</div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:8px;">
+                <div><div style="font-size:11px; color:#A8A199; margin-bottom:3px;">Tipo de evento</div><div style="font-size:14px;">{{ eventType }}</div></div>
+                <div><div style="font-size:11px; color:#A8A199; margin-bottom:3px;">Convidados</div><div style="font-size:14px; font-variant-numeric:tabular-nums;">{{ eventGuests }}</div></div>
+                <div><div style="font-size:11px; color:#A8A199; margin-bottom:3px;">Local</div><div style="font-size:14px;">{{ eventVenue }}</div></div>
+                <div><div style="font-size:11px; color:#A8A199; margin-bottom:3px;">Data</div><div style="font-size:14px; font-variant-numeric:tabular-nums;">{{ eventDateLabel }}</div></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#A8A199; margin-bottom:14px;">Contactos do cliente</div>
+              <div style="background:#FFFFFF; border:1px solid #E8E3DC; border-radius:4px; padding:16px; display:flex; flex-direction:column; gap:14px;">
+                <div style="display:flex; gap:12px; align-items:center;">
+                  <div style="width:36px;height:36px;border-radius:50%;background:#8A9A7B1F;color:#8A9A7B;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;">{{ eventClientInitials }}</div>
+                  <div><div style="font-size:14px; font-weight:500;">{{ eventClient }}</div><div style="font-size:12px; color:#6B655D;">{{ eventClientContact }}</div></div>
+                </div>
+                <div style="display:flex; gap:12px; align-items:center;">
+                  <div style="width:36px;height:36px;border-radius:50%;background:#C4703F1F;color:#C4703F;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;">JP</div>
+                  <div><div style="font-size:14px; font-weight:500;">João Pereira</div><div style="font-size:12px; color:#6B655D;">joao.pereira@mail.com · +351 918 765 432</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isTeam }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px;">
+            <sc-for list="{{ team }}" as="member" hint-placeholder-count="6">
+              <div style="border:1px solid #E8E3DC; border-radius:4px; background:#FFFFFF; padding:18px;">
+                <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px;">
+                  <div style="{{ member.avatarStyle }}">{{ member.initials }}</div>
+                  <div><div style="font-size:14px; font-weight:500;">{{ member.name }}</div><div style="font-size:12px; color:#6B655D;">{{ member.role }}</div></div>
+                </div>
+                <div style="font-size:13px; color:#6B655D; margin-bottom:8px;">{{ member.responsibility }}</div>
+                <div style="font-size:12px; color:#A8A199; font-variant-numeric:tabular-nums;">Turno {{ member.shift }}</div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+              <div style-hover="border-color:#8A9A7B;" style="border:1px dashed #E8E3DC; border-radius:4px; display:flex; align-items:center; justify-content:center; min-height:110px; cursor:pointer; color:#A8A199; font-size:13px; gap:6px; transition:border-color 180ms ease-out;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8A199" stroke-width="1.8"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Adicionar membro da equipa
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isFiles }}" hint-placeholder-val="{{ false }}">
+          <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+            <div style="border:1px dashed #E8E3DC; border-radius:4px; padding:24px; text-align:center; margin-bottom:32px; color:#A8A199; font-size:13px;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A8A199" stroke-width="1.6" style="margin:0 auto 8px;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="7 10 12 5 17 10"></polyline><line x1="12" y1="5" x2="12" y2="15"></line></svg>
+              Arraste ficheiros para aqui ou clique para carregar
+            </div>
+          </sc-if>
+          <sc-for list="{{ fileCategories }}" as="cat" hint-placeholder-count="6">
+            <div style="margin-bottom:28px;">
+              <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#A8A199; margin-bottom:12px;">{{ cat.label }}</div>
+              <div style="display:flex; flex-direction:column;">
+                <sc-for list="{{ cat.files }}" as="file" hint-placeholder-count="2">
+                  <div style-hover="background:#8A9A7B08;" style="display:flex; align-items:center; gap:14px; padding:12px 8px; border-bottom:1px solid #E8E3DC; transition:background 180ms ease-out;">
+                    <span dangerously-set-inner-h-t-m-l="{{ file.icon }}" style="flex-shrink:0;"></span>
+                    <div style="flex:1; font-size:13px;">{{ file.name }}</div>
+                    <div style="width:120px; font-size:12px; color:#6B655D;">{{ file.uploader }}</div>
+                    <div style="width:90px; font-size:12px; color:#A8A199; font-variant-numeric:tabular-nums;">{{ file.date }}</div>
+                    <div style="width:60px; font-size:12px; color:#A8A199; text-align:right; font-variant-numeric:tabular-nums;">{{ file.size }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </sc-if>
+
+        <sc-if value="{{ isTimeline }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-direction:column; max-width:640px;">
+            <sc-for list="{{ timeline }}" as="ev" hint-placeholder-count="5">
+              <div style="display:flex; gap:20px;">
+                <div style="width:52px; flex-shrink:0; text-align:right; font-size:13px; font-weight:500; font-variant-numeric:tabular-nums; padding-top:2px;">{{ ev.time }}</div>
+                <div style="display:flex; flex-direction:column; align-items:center; flex-shrink:0;">
+                  <div style="{{ ev.dotStyle }}"></div>
+                  <sc-if value="{{ ev.hasLine }}" hint-placeholder-val="{{ true }}"><div style="width:1px; flex:1; background:#E8E3DC; min-height:44px;"></div></sc-if>
+                </div>
+                <div style="padding-bottom:32px; border-left:3px solid {{ ev.dotColor }}; padding-left:14px; margin-left:-1px;">
+                  <div style="font-size:14px; font-weight:500; margin-bottom:3px;">{{ ev.label }}</div>
+                  <div style="font-size:12px; color:#6B655D;">{{ ev.owner }} · {{ ev.duration }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isTasks }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-direction:column; max-width:760px;">
+            <sc-for list="{{ tasks }}" as="task" hint-placeholder-count="6">
+              <div style="display:flex; align-items:center; gap:14px; padding:13px 4px; border-bottom:1px solid #E8E3DC;">
+                <div onClick="{{ task.onToggle }}" style="{{ task.checkStyle }}">
+                  <sc-if value="{{ task.done }}" hint-placeholder-val="{{ false }}">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </sc-if>
+                </div>
+                <div style="{{ task.textStyle }}">{{ task.label }}</div>
+                <div style="width:130px; font-size:12px; color:#6B655D;">{{ task.responsible }}{{ task.mineTag }}</div>
+                <div style="{{ task.deadlineStyle }}">{{ task.deadline }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isNotes }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:680px; display:flex; flex-direction:column; gap:18px;">
+            <div style="display:flex; gap:12px; background:#C4703F0D; border:1px solid #C4703F33; border-radius:4px; padding:14px 16px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C4703F" stroke-width="1.8" style="flex-shrink:0; margin-top:1px;"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9L2.7 17a1.8 1.8 0 001.5 2.7h15.6a1.8 1.8 0 001.5-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"></path></svg>
+              <div>
+                <div style="font-size:12px; font-weight:600; color:#C4703F; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:3px;">Fixado</div>
+                <div style="font-size:13px; color:#1C1A17;">Confirmar com a Quinta de Sintra se a tenda de reserva pode ser montada até às 09:00 — o fornecedor de som precisa de acesso antes da decoração.</div>
+              </div>
+            </div>
+            <sc-for list="{{ notes }}" as="note" hint-placeholder-count="4">
+              <div style="display:flex; gap:12px;">
+                <div style="{{ note.avatarStyle }}">{{ note.initials }}</div>
+                <div style="flex:1;">
+                  <div style="display:flex; align-items:baseline; gap:8px; margin-bottom:3px;">
+                    <div style="font-size:13px; font-weight:500;">{{ note.author }}</div>
+                    <div style="font-size:11px; color:#A8A199;">{{ note.time }}</div>
+                  </div>
+                  <div style="font-size:13px; color:#1C1A17; line-height:1.5;">{{ note.text }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const NAV_ICONS = {
+  dashboard: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="8" height="8" rx="1"></rect><rect x="13" y="3" width="8" height="8" rx="1"></rect><rect x="3" y="13" width="8" height="8" rx="1"></rect><rect x="13" y="13" width="8" height="8" rx="1"></rect></svg>',
+  schedule: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>',
+  events: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="17" rx="1"></rect><line x1="3" y1="9" x2="21" y2="9"></line></svg>',
+  team: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.4"></circle><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"></path><path d="M14.5 15c2.6.3 4.5 2.2 4.5 5"></path></svg>',
+  documents: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><polyline points="14 3 14 9 20 9"></polyline></svg>',
+  settings: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>'
+};
+
+const FILE_ICON = {
+  pdf: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C4703F" stroke-width="1.6"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><polyline points="14 3 14 9 20 9"></polyline></svg>',
+  img: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8A9A7B" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5-4 4-3-3-6 6"></path></svg>',
+  xls: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6B655D" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="9" x2="9" y2="21"></line></svg>'
+};
+
+const PEOPLE_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="11" width="14" height="9" rx="1"></rect><path d="M8 11V7a4 4 0 018 0v4"></path></svg>';
+const NAV = [
+  { key: 'dashboard', label: 'Dashboard', href: './Organizza Events Dashboard.dc.html' },
+  { key: 'schedule', label: 'Calendário', href: './Organizza Schedule.dc.html' },
+  { key: 'events', label: 'Eventos', active: true },
+  { key: 'team', label: 'Equipa', href: './Organizza Team.dc.html' },
+  { key: 'documents', label: 'Documentos' }
+];
+
+const TABS = ['Overview', 'Team', 'Files', 'Timeline', 'Tasks', 'Notes'];
+
+const SERVICES = [
+  { label: 'Produção', on: true }, { label: 'Decoração', on: true }, { label: 'Design Floral', on: true },
+  { label: 'Coordenação de Catering', on: false }, { label: 'Iluminação', on: true },
+  { label: 'Mobiliário', on: true }, { label: 'Fotografia', on: false }, { label: 'Entretenimento', on: false }
+];
+
+const TEAM = [
+  { initials: 'AC', color: '#8A9A7B', name: 'Ana Costa', role: 'Gestora de Evento', responsibility: 'Coordenação geral e ligação com o cliente', shift: '08:00–02:00' },
+  { initials: 'MF', color: '#C4703F', name: 'Miguel Ferreira', role: 'Coordenador de Produção', responsibility: 'Montagem, desmontagem e logística', shift: '07:00–01:00' },
+  { initials: 'RP', color: '#B8A88A', name: 'Rita Pereira', role: 'Decoradora', responsibility: 'Styling de mesas e cenografia', shift: '08:00–20:00' },
+  { initials: 'TA', color: '#8A9A7B', name: 'Tiago Alves', role: 'Técnico de Iluminação', responsibility: 'Iluminação decorativa e efeitos', shift: '09:00–23:00' },
+  { initials: 'IR', color: '#C4703F', name: 'Inês Rodrigues', role: 'Designer Floral', responsibility: 'Arranjos e composições florais', shift: '07:30–14:00' },
+  { initials: 'PN', color: '#6B655D', name: 'Pedro Nunes', role: 'Logística', responsibility: 'Transporte, fornecedores e apoio geral', shift: '06:00–22:00' }
+];
+
+const FILE_CATEGORIES = [
+  { label: 'Briefing', files: [
+    { name: 'Briefing_Casamento_CatarinaJoao.pdf', uploader: 'Ana Costa', date: '02/07/2026', size: '1.2 MB', type: 'pdf' }
+  ] },
+  { label: 'Moodboards', files: [
+    { name: 'Moodboard_Cerimonia_v3.pdf', uploader: 'Rita Pereira', date: '14/07/2026', size: '8.4 MB', type: 'pdf' },
+    { name: 'Referencias_Florais.jpg', uploader: 'Inês Rodrigues', date: '15/07/2026', size: '3.1 MB', type: 'img' }
+  ] },
+  { label: 'Orçamentos', files: [
+    { name: 'Orcamento_Geral_v2.xlsx', uploader: 'Ana Costa', date: '20/07/2026', size: '340 KB', type: 'xls' }
+  ] },
+  { label: 'Plantas', files: [
+    { name: 'Planta_Jardim_Cerimonia.pdf', uploader: 'Miguel Ferreira', date: '28/07/2026', size: '2.0 MB', type: 'pdf' }
+  ] },
+  { label: 'Documentos de Fornecedores', files: [
+    { name: 'Contrato_Som_LuzEEfeitos.pdf', uploader: 'Tiago Alves', date: '30/07/2026', size: '890 KB', type: 'pdf' },
+    { name: 'Proposta_Floristaria_Bloom.pdf', uploader: 'Inês Rodrigues', date: '31/07/2026', size: '1.1 MB', type: 'pdf' }
+  ] },
+  { label: 'Referências do Cliente', files: [
+    { name: 'Pinterest_Catarina.jpg', uploader: 'Catarina Silva', date: '10/06/2026', size: '2.4 MB', type: 'img' }
+  ] }
+];
+
+const TIMELINE = [
+  { time: '08:00', label: 'Chegada da equipa', owner: 'Pedro Nunes', duration: '1h' },
+  { time: '10:00', label: 'Montagem da decoração', owner: 'Rita Pereira, Tiago Alves', duration: '4h' },
+  { time: '14:00', label: 'Preparação final', owner: 'Ana Costa', duration: '2h' },
+  { time: '18:00', label: 'Chegada dos convidados', owner: 'Ana Costa', duration: '—' },
+  { time: '02:00', label: 'Encerramento e desmontagem', owner: 'Pedro Nunes', duration: '—' }
+];
+
+const NOTES = [
+  { initials: 'AC', color: '#8A9A7B', author: 'Ana Costa', time: '2 de agosto, 09:14', text: '@Rita confirma que o fornecedor floral chega às 07:30, antes da montagem geral.' },
+  { initials: 'RP', color: '#B8A88A', author: 'Rita Pereira', time: '2 de agosto, 09:40', text: 'Confirmado. Vou coordenar com a @Inês para os arranjos da mesa principal.' },
+  { initials: 'MF', color: '#C4703F', author: 'Miguel Ferreira', time: '3 de agosto, 17:02', text: 'Planta de acesso à Quinta de Sintra atualizada nos documentos — via norte fechada até às 08:00.' }
+];
+
+const CURRENT_EMPLOYEE = 'Tiago Alves';
+
+const EVENTS_META = {
+  1: { name: 'Sofia & Pedro', type: 'Casamento', client: 'Sofia Martins', date: '2026-08-14', venue: 'Quinta da Torre', guests: 180, status: 'Produção' },
+  2: { name: 'Galp — Conferência de Liderança', type: 'Corporativo', client: 'Galp Energia', date: '2026-08-19', venue: 'Palácio de Seteais', guests: 120, status: 'Planeamento' },
+  3: { name: 'Beatriz & Rui', type: 'Casamento', client: 'Beatriz Santos', date: '2026-08-29', venue: 'Quinta de Sintra', guests: 140, status: 'Planeamento' },
+  4: { name: 'Catarina & João', type: 'Casamento', client: 'Catarina Silva', date: '2026-10-18', venue: 'Quinta de Sintra', guests: 180, status: 'Planeamento' },
+  5: { name: 'Retiro Origens', type: 'Privado', client: 'Inês Rodrigues', date: '2026-09-04', venue: 'Convento do Beato', guests: 30, status: 'Planeamento' },
+  6: { name: 'EDP — Jantar de Natal', type: 'Corporativo', client: 'EDP', date: '2026-09-11', venue: 'Tivoli Palácio', guests: 90, status: 'Planeamento' },
+  7: { name: 'Miguel & Ana', type: 'Casamento', client: 'Miguel Ferreira', date: '2026-07-25', venue: 'Quinta da Torre', guests: 160, status: 'Concluído' },
+  8: { name: 'Prova de Vinhos — Adega Regional', type: 'Privado', client: 'João Ribeiro', date: '2026-07-12', venue: 'Palácio de Seteais', guests: 40, status: 'Concluído' },
+  9: { name: 'Sonae — Encontro de Diretores', type: 'Corporativo', client: 'Sonae', date: '2026-10-03', venue: 'Tivoli Palácio', guests: 70, status: 'Cancelado' }
+};
+const STATUS_COLORS_WS = { Produção: '#8A9A7B', Planeamento: '#B8A88A', Concluído: '#6B655D', Cancelado: '#C4703F' };
+function initialsOf(name) { return name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase(); }
+
+class Component extends DCLogic {
+  state = {
+    profileMenuOpen: false,
+    role: (localStorage.getItem('organizza_role') || 'Admin'),
+    activeTab: 'Overview',
+    sidebarCollapsed: false,
+    tasks: [
+      { id: 1, label: 'Confirmar lista final de convidados', responsible: 'Ana Costa', deadline: '15/09/2026', done: true },
+      { id: 2, label: 'Assinar contrato com floristaria', responsible: 'Inês Rodrigues', deadline: '20/09/2026', done: true },
+      { id: 3, label: 'Enviar planta de montagem à Quinta de Sintra', responsible: 'Miguel Ferreira', deadline: '25/07/2026', done: false, overdue: true },
+      { id: 4, label: 'Reservar equipamento de iluminação', responsible: 'Tiago Alves', deadline: '01/10/2026', done: false },
+      { id: 5, label: 'Confirmar menu com catering', responsible: 'Ana Costa', deadline: '05/10/2026', done: false },
+      { id: 6, label: 'Ensaio de cerimónia no local', responsible: 'Ana Costa', deadline: '17/10/2026', done: false }
+    ]
+  };
+
+  toggleSidebar() { this.setState(s => ({ sidebarCollapsed: !s.sidebarCollapsed })); }
+  setTab(t) { this.setState({ activeTab: t }); }
+  toggleTask(id) { this.setState(s => ({ tasks: s.tasks.map(t => t.id === id ? { ...t, done: !t.done } : t) })); }
+
+  renderVals() {
+    const { activeTab, sidebarCollapsed, tasks, role } = this.state;
+    const isAdmin = role === 'Admin';
+    const eventId = Number(new URLSearchParams(window.location.search).get('id')) || 4;
+    const meta = EVENTS_META[eventId] || EVENTS_META[4];
+    const evDate = new Date(meta.date + 'T00:00:00');
+
+    const navList = isAdmin ? [...NAV.slice(0, -1), { key: 'people', label: 'Pessoas', href: './Organizza People.dc.html' }, NAV[NAV.length - 1]] : NAV;
+    const navItems = navList.map(n => ({
+      label: n.label,
+      icon: NAV_ICONS[n.key] || PEOPLE_ICON,
+      onClick: n.href ? () => { window.location.href = n.href; } : undefined,
+      style: `display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:4px;cursor:pointer;font-size:14px;font-weight:${n.active ? 500 : 400};color:${n.active ? '#1C1A17' : '#6B655D'};background:${n.active ? '#8A9A7B14' : 'transparent'};transition:background 180ms ease-out;justify-content:${sidebarCollapsed ? 'center' : 'flex-start'};`
+    }));
+
+    const tabs = TABS.map(t => {
+      const active = activeTab === t;
+      return {
+        label: t,
+        onClick: () => this.setTab(t),
+        style: `font-family:inherit;font-size:13px;font-weight:500;padding:14px 16px;border:none;background:transparent;cursor:pointer;color:${active ? '#1C1A17' : '#A8A199'};border-bottom:2px solid ${active ? '#8A9A7B' : 'transparent'};transition:color 180ms ease-out;`
+      };
+    });
+
+    const services = SERVICES.map(s => ({
+      label: s.label,
+      style: s.on
+        ? 'font-size:12px;font-weight:500;padding:7px 14px;border-radius:100px;background:#8A9A7B;color:#FFFFFF;'
+        : 'font-size:12px;font-weight:500;padding:7px 14px;border-radius:100px;background:#FFFFFF;color:#A8A199;border:1px solid #E8E3DC;'
+    }));
+
+    const team = TEAM.map(m => ({
+      ...m,
+      avatarStyle: `width:40px;height:40px;border-radius:50%;background:${m.color}1F;color:${m.color};font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;`
+    }));
+
+    const fileCategories = FILE_CATEGORIES.map(cat => ({
+      label: cat.label,
+      files: cat.files.map(f => ({ ...f, icon: FILE_ICON[f.type] }))
+    }));
+
+    const timeline = TIMELINE.map((ev, i) => ({
+      ...ev,
+      hasLine: i < TIMELINE.length - 1,
+      dotStyle: `width:9px;height:9px;border-radius:50%;background:${i === 3 ? '#C4703F' : '#8A9A7B'};margin-top:5px;flex-shrink:0;`,
+      dotColor: i === 3 ? '#C4703F' : '#8A9A7B'
+    }));
+
+    const tasksVals = tasks.map(t => {
+      const editable = isAdmin || t.responsible === CURRENT_EMPLOYEE;
+      return {
+        ...t,
+        onToggle: editable ? () => this.toggleTask(t.id) : undefined,
+        mineTag: (!isAdmin && t.responsible === CURRENT_EMPLOYEE) ? ' · você' : '',
+        checkStyle: `width:18px;height:18px;border-radius:4px;border:1.5px solid ${t.done ? '#8A9A7B' : '#E8E3DC'};background:${t.done ? '#8A9A7B' : '#FFFFFF'};display:flex;align-items:center;justify-content:center;cursor:${editable ? 'pointer' : 'default'};flex-shrink:0;transition:background 180ms ease-out;opacity:${editable ? 1 : 0.7};`,
+        textStyle: `flex:1;font-size:13px;color:${t.done ? '#A8A199' : '#1C1A17'};text-decoration:${t.done ? 'line-through' : 'none'};`,
+        deadlineStyle: `width:100px;text-align:right;font-size:12px;font-variant-numeric:tabular-nums;color:${t.overdue && !t.done ? '#C4703F' : '#A8A199'};font-weight:${t.overdue && !t.done ? 600 : 400};`
+      };
+    });
+
+    const notes = NOTES.map(n => ({
+      ...n,
+      avatarStyle: `width:32px;height:32px;border-radius:50%;background:${n.color}1F;color:${n.color};font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;`
+    }));
+
+    return {
+      profileMenuOpen: this.state.profileMenuOpen, toggleProfileMenu: () => this.setState(s => ({ profileMenuOpen: !s.profileMenuOpen })), closeProfileMenu: () => this.setState({ profileMenuOpen: false }),
+      profileName: isAdmin ? 'Ana Costa' : 'Miguel Ferreira', profileEmail: isAdmin ? 'ana.costa@organizza.pt' : 'miguel.ferreira@organizza.pt', profileInitials: isAdmin ? 'AC' : 'MF',
+      goToSettings: () => { window.location.href = './Organizza Definições.dc.html'; },
+      logout: () => { localStorage.removeItem('organizza_role'); window.location.href = './Organizza Login.dc.html'; },
+      role, onRoleChange: (e) => { localStorage.setItem('organizza_role', e.target.value); this.setState({ role: e.target.value }); }, isAdmin,
+      eventName: meta.name, eventType: meta.type, eventClient: meta.client, eventClientInitials: initialsOf(meta.client),
+      eventClientContact: meta.client.toLowerCase().replace(/\s+/g, '.') + '@mail.com',
+      eventGuests: meta.guests, eventVenue: meta.venue, eventStatus: meta.status, eventStatusColor: STATUS_COLORS_WS[meta.status],
+      eventDateLabel: `${String(evDate.getDate()).padStart(2, '0')}/${String(evDate.getMonth() + 1).padStart(2, '0')}/${evDate.getFullYear()}`,
+      eventCoverPlaceholder: 'Foto do local — ' + meta.venue,
+      sidebarWidth: sidebarCollapsed ? '64px' : '240px',
+      sidebarCollapsed,
+      toggleSidebar: () => this.toggleSidebar(),
+      navItems,
+      tabs,
+      isOverview: activeTab === 'Overview',
+      isTeam: activeTab === 'Team',
+      isFiles: activeTab === 'Files',
+      isTimeline: activeTab === 'Timeline',
+      isTasks: activeTab === 'Tasks',
+      isNotes: activeTab === 'Notes',
+      services,
+      team,
+      fileCategories,
+      timeline,
+      tasks: tasksVals,
+      notes
+    };
+  }
+}
+
+</script>
+</body>
+</html>

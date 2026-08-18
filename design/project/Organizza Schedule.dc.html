@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #FAF8F5; }
+    * { box-sizing: border-box; }
+    input::placeholder, textarea::placeholder { color: #A8A199; }
+    select { font-family: inherit; }
+    :focus-visible { outline: 2px solid #8A9A7B; outline-offset: 2px; }
+  </style>
+</helmet>
+
+<div style="font-family:'Inter',sans-serif; color:#1C1A17; background:#FAF8F5; width:1440px; min-height:900px; position:relative; overflow:hidden;">
+  <div style="display:flex;">
+
+    <aside style="width:240px; flex-shrink:0; border-right:1px solid #E8E3DC; display:flex; flex-direction:column; padding:24px 16px; gap:32px;">
+      <div style="font-family:'Fraunces',serif; font-size:19px; font-weight:500;">Organizza</div>
+      <nav style="display:flex; flex-direction:column; gap:4px;">
+        <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="6">
+          <div onClick="{{ item.onClick }}" style-hover="background:#8A9A7B10;" style="{{ item.style }}">
+            <span style="flex-shrink:0; display:flex;" dangerously-set-inner-h-t-m-l="{{ item.icon }}"></span>
+            <span style="white-space:nowrap;">{{ item.label }}</span>
+          </div>
+        </sc-for>
+      </nav>
+    </aside>
+
+    <main style="flex:1; min-width:0;">
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 40px; border-bottom:1px solid #E8E3DC;">
+        <div style="display:flex; align-items:center; gap:8px; background:#FFFFFF; border:1px solid #E8E3DC; border-radius:4px; padding:8px 12px; width:280px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8A199" stroke-width="1.8"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input placeholder="Pesquisar" style="border:none; outline:none; font-size:13px; font-family:inherit; width:100%; background:transparent; color:#1C1A17;"></input>
+        </div>
+        <div style="display:flex; align-items:center; gap:20px;">
+          <div style="font-size:13px; color:#6B655D;">Sexta-feira, 7 de agosto de 2026</div>
+          <div style="position:relative;">
+            <div onClick="{{ toggleProfileMenu }}" style="width:30px;height:30px;border-radius:50%;background:#8A9A7B1F;color:#8A9A7B;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;cursor:pointer;">{{ profileInitials }}</div>
+            <sc-if value="{{ profileMenuOpen }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ closeProfileMenu }}" style="position:fixed; inset:0; z-index:40;"></div>
+              <div style="position:absolute; top:38px; right:0; width:220px; background:#FFFFFF; border:1px solid #E8E3DC; border-radius:8px; box-shadow:0 8px 24px rgba(28,26,23,0.10); z-index:50; overflow:hidden;">
+                <div style="padding:14px 16px; border-bottom:1px solid #F1EEE8;">
+                  <div style="font-size:13px; font-weight:500;">{{ profileName }}</div>
+                  <div style="font-size:12px; color:#A8A199;">{{ profileEmail }}</div>
+                </div>
+                <div onClick="{{ goToSettings }}" style-hover="background:#FAF8F5;" style="padding:10px 16px; font-size:13px; cursor:pointer;">Definições</div>
+                <div onClick="{{ logout }}" style-hover="background:#FAF8F5;" style="padding:10px 16px; font-size:13px; color:#C4703F; cursor:pointer; border-top:1px solid #F1EEE8;">Terminar sessão</div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:24px 40px 0;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:20px;">
+          <h1 style="font-family:'Fraunces',serif; font-weight:500; font-size:26px; margin:0;">Calendário</h1>
+          <div style="display:flex; gap:6px; background:#FFFFFF; border:1px solid #E8E3DC; border-radius:4px; padding:3px;">
+            <sc-for list="{{ viewOptions }}" as="v" hint-placeholder-count="3">
+              <button onClick="{{ v.onClick }}" style="{{ v.style }}">{{ v.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+          <sc-for list="{{ deptChips }}" as="chip" hint-placeholder-count="5">
+            <button onClick="{{ chip.onClick }}" style="{{ chip.style }}">{{ chip.label }}</button>
+          </sc-for>
+          <select value="{{ eventFilter }}" onChange="{{ onEventFilterChange }}" style="font-size:12px; padding:7px 10px; border:1px solid #E8E3DC; border-radius:4px; background:#FFFFFF; color:#6B655D;">
+            <sc-for list="{{ eventOptions }}" as="evOpt" hint-placeholder-count="5">
+              <option value="{{ evOpt }}">{{ evOpt }}</option>
+            </sc-for>
+          </select>
+          <div style="display:flex; align-items:center; gap:6px; background:#FFFFFF; border:1px solid #E8E3DC; border-radius:4px; padding:7px 10px; width:180px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#A8A199" stroke-width="1.8"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input value="{{ personQuery }}" onChange="{{ onPersonQueryChange }}" placeholder="Procurar pessoa" style="border:none; outline:none; font-size:12px; font-family:inherit; width:100%; background:transparent; color:#1C1A17;"></input>
+          </div>
+          <sc-if value="{{ isEmployee }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ toggleFullTeam }}" style="margin-left:auto; background:#FFFFFF; color:#6B655D; border:1px solid #E8E3DC; border-radius:4px; padding:9px 14px; font-size:13px; font-family:inherit; cursor:pointer;">{{ fullTeamLabel }}</button>
+          </sc-if>
+          <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ openPanel }}" style-hover="background:#7C8C6E;" style="margin-left:auto; background:#8A9A7B; color:#fff; border:none; border-radius:4px; padding:9px 16px; font-size:13px; font-family:inherit; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:6px; transition:background 180ms ease-out;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Adicionar turno
+            </button>
+          </sc-if>
+        </div>
+      </div>
+
+      <!-- WEEK VIEW -->
+      <sc-if value="{{ isWeek }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:0 40px 60px; overflow-x:auto;">
+          <div style="min-width:1180px;">
+            <div style="display:grid; grid-template-columns:200px repeat(7, 1fr) 64px; border-bottom:1px solid #E8E3DC; padding-bottom:8px;">
+              <div></div>
+              <sc-for list="{{ days }}" as="wd" hint-placeholder-count="7">
+                <div style="text-align:center;">
+                  <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:#A8A199;">{{ wd.weekday }}</div>
+                  <div style="font-size:13px; font-weight:500; font-variant-numeric:tabular-nums;">{{ wd.date }}</div>
+                </div>
+              </sc-for>
+              <div style="text-align:right; font-size:11px; color:#A8A199; padding-right:4px;">Horas</div>
+            </div>
+
+            <sc-for list="{{ groups }}" as="grp" hint-placeholder-count="5">
+              <div>
+                <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#6B655D; background:#EFEAE1; padding:6px 10px; margin-top:12px; border-radius:4px;">{{ grp.label }}</div>
+                <sc-for list="{{ grp.people }}" as="person" hint-placeholder-count="3">
+                  <div style="display:grid; grid-template-columns:200px repeat(7, 1fr) 64px; border-bottom:1px solid #E8E3DC; align-items:stretch; min-height:60px;">
+                    <div style="display:flex; align-items:center; gap:8px; padding:8px 10px 8px 0;">
+                      <div style="{{ person.avatarStyle }}">{{ person.initials }}</div>
+                      <div style="font-size:13px;">{{ person.name }}</div>
+                    </div>
+                    <sc-for list="{{ person.days }}" as="cell" hint-placeholder-count="7">
+                      <div onDragOver="{{ cell.onDragOver }}" onDragEnter="{{ cell.onDragEnter }}" onDragLeave="{{ cell.onDragLeave }}" onDrop="{{ cell.onDrop }}" style="{{ cell.style }}">
+                        <sc-for list="{{ cell.shifts }}" as="shift" hint-placeholder-count="1">
+                          <div draggable="{{ shift.draggable }}" onDragStart="{{ shift.onDragStart }}" onDragEnd="{{ shift.onDragEnd }}" onClick="{{ shift.onClick }}" title="{{ shift.tooltip }}" style="{{ shift.style }}">
+                            <sc-if value="{{ shift.conflict }}" hint-placeholder-val="{{ false }}">
+                              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C4703F" stroke-width="2" style="flex-shrink:0; margin-bottom:1px;"><path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9L2.7 17a1.8 1.8 0 001.5 2.7h15.6a1.8 1.8 0 001.5-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"></path></svg>
+                            </sc-if>
+                            <div style="font-size:11px; font-weight:600; line-height:1.25; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ shift.event }}</div>
+                            <div style="font-size:10px; color:#6B655D; line-height:1.3;">{{ shift.role }}</div>
+                            <div style="font-size:10px; color:#A8A199; font-variant-numeric:tabular-nums;">{{ shift.time }}</div>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </sc-for>
+                    <div style="display:flex; align-items:center; justify-content:flex-end; padding-right:4px; font-size:12px; color:#6B655D; font-variant-numeric:tabular-nums;">{{ person.totalHours }}h</div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- DAY VIEW -->
+      <sc-if value="{{ isDay }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:0 40px 60px;">
+          <div style="font-size:13px; color:#6B655D; margin-bottom:16px;">{{ selectedDayLabel }}</div>
+          <div style="display:flex; flex-direction:column; max-width:760px;">
+            <sc-for list="{{ dayShifts }}" as="ds" hint-placeholder-count="6">
+              <div style="display:flex; align-items:center; gap:14px; padding:12px 10px; border-bottom:1px solid #E8E3DC; border-left:3px solid {{ ds.color }};">
+                <div style="{{ ds.avatarStyle }}">{{ ds.initials }}</div>
+                <div style="flex:1;">
+                  <div style="font-size:13px; font-weight:500;">{{ ds.person }} · {{ ds.role }}</div>
+                  <div style="font-size:12px; color:#6B655D;">{{ ds.event }}</div>
+                </div>
+                <div style="font-size:12px; color:#A8A199; font-variant-numeric:tabular-nums;">{{ ds.time }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- MONTH VIEW -->
+      <sc-if value="{{ isMonth }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:0 40px 60px;">
+          <div style="font-size:13px; color:#6B655D; margin-bottom:16px;">{{ monthLabel }}</div>
+          <div style="display:grid; grid-template-columns:repeat(7, 1fr); gap:1px; background:#E8E3DC; border:1px solid #E8E3DC; max-width:900px;">
+            <sc-for list="{{ weekdayLabels }}" as="wl" hint-placeholder-count="7">
+              <div style="background:#FFFFFF; padding:6px; font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:#A8A199; text-align:center;">{{ wl }}</div>
+            </sc-for>
+            <sc-for list="{{ monthCells }}" as="mc" hint-placeholder-count="35">
+              <div style="{{ mc.style }}">
+                <div style="font-size:12px; font-variant-numeric:tabular-nums; color:{{ mc.textColor }};">{{ mc.day }}</div>
+                <sc-if value="{{ mc.hasShifts }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:10px; color:#8A9A7B; margin-top:4px;">{{ mc.count }} turnos</div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </main>
+  </div>
+
+  <!-- SLIDE-OVER -->
+  <div style="{{ backdropStyle }}" onClick="{{ closePanel }}"></div>
+  <div style="{{ panelStyle }}">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid #E8E3DC;">
+      <div style="font-family:'Fraunces',serif; font-size:18px; font-weight:500;">Novo turno</div>
+      <button onClick="{{ closePanel }}" style="border:none; background:transparent; cursor:pointer; color:#A8A199;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+    <div style="padding:24px; display:flex; flex-direction:column; gap:16px; overflow-y:auto;">
+      <div>
+        <div style="font-size:11px; color:#A8A199; margin-bottom:6px;">Pessoa</div>
+        <select value="{{ form.personId }}" onChange="{{ form.onPersonChange }}" style="width:100%; padding:9px 10px; border:1px solid #E8E3DC; border-radius:4px; font-size:13px; background:#FFFFFF;">
+          <sc-for list="{{ peopleOptions }}" as="pOpt" hint-placeholder-count="12">
+            <option value="{{ pOpt.id }}">{{ pOpt.name }}</option>
+          </sc-for>
+        </select>
+      </div>
+      <div>
+        <div style="font-size:11px; color:#A8A199; margin-bottom:6px;">Evento</div>
+        <select value="{{ form.event }}" onChange="{{ form.onEventChange }}" style="width:100%; padding:9px 10px; border:1px solid #E8E3DC; border-radius:4px; font-size:13px; background:#FFFFFF;">
+          <sc-for list="{{ eventNameOptions }}" as="evNameOpt" hint-placeholder-count="4">
+            <option value="{{ evNameOpt }}">{{ evNameOpt }}</option>
+          </sc-for>
+        </select>
+      </div>
+      <div>
+        <div style="font-size:11px; color:#A8A199; margin-bottom:6px;">Função</div>
+        <input value="{{ form.role }}" onChange="{{ form.onRoleChange }}" placeholder="ex: Assistente de Produção" style="width:100%; padding:9px 10px; border:1px solid #E8E3DC; border-radius:4px; font-size:13px;"></input>
+      </div>
+      <div>
+        <div style="font-size:11px; color:#A8A199; margin-bottom:6px;">Data</div>
+        <select value="{{ form.day }}" onChange="{{ form.onDayChange }}" style="width:100%; padding:9px 10px; border:1px solid #E8E3DC; border-radius:4px; font-size:13px; background:#FFFFFF;">
+          <sc-for list="{{ dayOptions }}" as="dOpt" hint-placeholder-count="7">
+            <option value="{{ dOpt.value }}">{{ dOpt.label }}</option>
+          </sc-for>
+        </select>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <div style="flex:1;">
+          <div style="font-size:11px; color:#A8A199; margin-bottom:6px;">Início</div>
+          <input type="time" value="{{ form.start }}" onChange="{{ form.onStartChange }}" style="width:100%; padding:9px 10px; border:1px solid #E8E3DC; border-radius:4px; font-size:13px;"></input>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:11px; color:#A8A199; margin-bottom:6px;">Fim</div>
+          <input type="time" value="{{ form.end }}" onChange="{{ form.onEndChange }}" style="width:100%; padding:9px 10px; border:1px solid #E8E3DC; border-radius:4px; font-size:13px;"></input>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:11px; color:#A8A199; margin-bottom:6px;">Local</div>
+        <input value="{{ form.location }}" onChange="{{ form.onLocationChange }}" placeholder="ex: Quinta da Torre" style="width:100%; padding:9px 10px; border:1px solid #E8E3DC; border-radius:4px; font-size:13px;"></input>
+      </div>
+      <div>
+        <div style="font-size:11px; color:#A8A199; margin-bottom:6px;">Notas</div>
+        <textarea value="{{ form.notes }}" onChange="{{ form.onNotesChange }}" placeholder="Notas adicionais" style="width:100%; height:70px; padding:9px 10px; border:1px solid #E8E3DC; border-radius:4px; font-size:13px; font-family:inherit; resize:none;"></textarea>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; padding:20px 24px; border-top:1px solid #E8E3DC; margin-top:auto;">
+      <button onClick="{{ closePanel }}" style="flex:1; background:#FFFFFF; color:#6B655D; border:1px solid #E8E3DC; border-radius:4px; padding:10px; font-size:13px; font-family:inherit; cursor:pointer;">Cancelar</button>
+      <button onClick="{{ saveShift }}" style-hover="background:#7C8C6E;" style="flex:1; background:#8A9A7B; color:#fff; border:none; border-radius:4px; padding:10px; font-size:13px; font-family:inherit; font-weight:500; cursor:pointer; transition:background 180ms ease-out;">Guardar turno</button>
+    </div>
+  </div>
+
+  <!-- READ-ONLY SHIFT POPOVER -->
+  <sc-if value="{{ viewShift }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeShiftView }}" style="position:fixed; inset:0; background:rgba(28,26,23,0.28); z-index:60; display:flex; align-items:center; justify-content:center;">
+      <div onClick="{{ stopProp }}" style="background:#FFFFFF; border-radius:4px; border:1px solid #E8E3DC; box-shadow:0 12px 32px rgba(28,26,23,0.18); width:340px; padding:20px;">
+        <div style="display:flex; align-items:center; justify-content:between; margin-bottom:12px;">
+          <div style="font-family:'Fraunces',serif; font-size:16px; font-weight:500;">{{ viewShift.event }}</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px; font-size:13px; color:#6B655D; margin-bottom:16px;">
+          <div><span style="color:#A8A199;">Pessoa</span> · {{ viewShift.personName }}</div>
+          <div><span style="color:#A8A199;">Função</span> · {{ viewShift.role }}</div>
+          <div style="font-variant-numeric:tabular-nums;"><span style="color:#A8A199;">Horário</span> · {{ viewShift.time }}</div>
+        </div>
+        <button onClick="{{ closeShiftView }}" style="width:100%; background:#FFFFFF; color:#6B655D; border:1px solid #E8E3DC; border-radius:4px; padding:9px; font-size:13px; font-family:inherit; cursor:pointer;">Fechar</button>
+      </div>
+    </div>
+  </sc-if>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const NAV_ICONS = {
+  dashboard: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="8" height="8" rx="1"></rect><rect x="13" y="3" width="8" height="8" rx="1"></rect><rect x="3" y="13" width="8" height="8" rx="1"></rect><rect x="13" y="13" width="8" height="8" rx="1"></rect></svg>',
+  schedule: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>',
+  events: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="17" rx="1"></rect><line x1="3" y1="9" x2="21" y2="9"></line></svg>',
+  team: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.4"></circle><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"></path><path d="M14.5 15c2.6.3 4.5 2.2 4.5 5"></path></svg>',
+  documents: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><polyline points="14 3 14 9 20 9"></polyline></svg>',
+  settings: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>'
+};
+const PEOPLE_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="11" width="14" height="9" rx="1"></rect><path d="M8 11V7a4 4 0 018 0v4"></path></svg>';
+const NAV = [
+  { key: 'dashboard', label: 'Dashboard', href: './Organizza Events Dashboard.dc.html' },
+  { key: 'schedule', label: 'Calendário', active: true },
+  { key: 'events', label: 'Eventos', href: './Organizza Events Dashboard.dc.html' },
+  { key: 'team', label: 'Equipa', href: './Organizza Team.dc.html' },
+  { key: 'documents', label: 'Documentos' }
+];
+
+const EVENTS = [
+  { name: 'Casamento Sofia & Pedro', venue: 'Quinta da Torre', color: '#8A9A7B' },
+  { name: 'Galp — Conferência de Liderança', venue: 'Palácio de Seteais', color: '#B8A88A' },
+  { name: 'Casamento Beatriz & Rui', venue: 'Quinta de Sintra', color: '#B8A88A' },
+  { name: 'Retiro Origens', venue: 'Convento do Beato', color: '#B8A88A' }
+];
+
+const DEPTS = ['Produção', 'Decoração', 'Logística', 'Design', 'Freelancers'];
+const DEPT_COLORS = { 'Produção': '#8A9A7B', 'Decoração': '#C4703F', 'Logística': '#B8A88A', 'Design': '#6B655D', 'Freelancers': '#A8A199' };
+
+const PEOPLE = [
+  { id: 'mf', name: 'Miguel Ferreira', initials: 'MF', dept: 'Produção', unavailable: [6] },
+  { id: 'pn', name: 'Pedro Nunes', initials: 'PN', dept: 'Produção', unavailable: [2] },
+  { id: 'ro', name: 'Rui Oliveira', initials: 'RO', dept: 'Produção', unavailable: [6] },
+  { id: 'rp', name: 'Rita Pereira', initials: 'RP', dept: 'Decoração', unavailable: [0, 1] },
+  { id: 'ir', name: 'Inês Rodrigues', initials: 'IR', dept: 'Decoração', unavailable: [2] },
+  { id: 'bs', name: 'Beatriz Santos', initials: 'BS', dept: 'Decoração', unavailable: [] },
+  { id: 'ta', name: 'Tiago Alves', initials: 'TA', dept: 'Logística', unavailable: [1] },
+  { id: 'jr', name: 'João Ribeiro', initials: 'JR', dept: 'Logística', unavailable: [3, 4] },
+  { id: 'sm', name: 'Sofia Martins', initials: 'SM', dept: 'Design', unavailable: [5, 6] },
+  { id: 'cg', name: 'Catarina Gomes', initials: 'CG', dept: 'Design', unavailable: [6] },
+  { id: 'at', name: 'Ana Teixeira', initials: 'AT', dept: 'Freelancers', unavailable: [0, 1, 2] },
+  { id: 'bn', name: 'Bruno Nogueira', initials: 'BN', dept: 'Freelancers', unavailable: [0, 1, 2, 3] }
+];
+
+const WEEKDAYS = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+const WEEK_DATES = ['10/08', '11/08', '12/08', '13/08', '14/08', '15/08', '16/08'];
+
+function hoursOf(start, end) {
+  const [sh, sm] = start.split(':').map(Number);
+  const [eh, em] = end.split(':').map(Number);
+  return Math.round((eh * 60 + em - sh * 60 - sm) / 60 * 10) / 10;
+}
+
+let SHIFT_SEQ = 100;
+function mkShift(personId, day, start, end, eventName, role) {
+  const ev = EVENTS.find(e => e.name === eventName);
+  return { id: SHIFT_SEQ++, personId, day, start, end, event: eventName, role, color: ev ? ev.color : '#A8A199' };
+}
+
+const INITIAL_SHIFTS = [
+  mkShift('mf', 4, '09:00', '18:00', 'Casamento Sofia & Pedro', 'Assistente de Produção'),
+  mkShift('mf', 4, '14:00', '20:00', 'Galp — Conferência de Liderança', 'Responsável de Montagem'),
+  mkShift('pn', 0, '08:00', '16:00', 'Retiro Origens', 'Logística'),
+  mkShift('pn', 5, '07:00', '15:00', 'Casamento Sofia & Pedro', 'Carga e Descarga'),
+  mkShift('ro', 1, '09:00', '17:00', 'Galp — Conferência de Liderança', 'Montagem Técnica'),
+  mkShift('rp', 4, '08:00', '20:00', 'Casamento Sofia & Pedro', 'Decoradora Responsável'),
+  mkShift('rp', 5, '08:00', '20:00', 'Casamento Sofia & Pedro', 'Decoradora Responsável'),
+  mkShift('ir', 4, '07:30', '14:00', 'Casamento Sofia & Pedro', 'Designer Floral'),
+  mkShift('bs', 3, '10:00', '18:00', 'Casamento Beatriz & Rui', 'Assistente de Decoração'),
+  mkShift('ta', 4, '09:00', '23:00', 'Casamento Sofia & Pedro', 'Técnico de Iluminação'),
+  mkShift('jr', 0, '08:00', '17:00', 'Retiro Origens', 'Transporte'),
+  mkShift('sm', 3, '09:00', '17:00', 'Casamento Beatriz & Rui', 'Designer'),
+  mkShift('cg', 2, '09:00', '17:00', 'Galp — Conferência de Liderança', 'Design Gráfico'),
+  mkShift('at', 5, '10:00', '22:00', 'Casamento Sofia & Pedro', 'Apoio no Local'),
+  mkShift('bn', 4, '12:00', '20:00', 'Casamento Sofia & Pedro', 'Apoio no Local')
+];
+
+const CURRENT_EMPLOYEE_ID = 'ta';
+
+class Component extends DCLogic {
+  state = {
+    profileMenuOpen: false,
+    role: (localStorage.getItem('organizza_role') || 'Admin'),
+    showFullTeam: false,
+    view: 'Semana',
+    activeDepts: new Set(DEPTS),
+    eventFilter: 'Todos',
+    personQuery: '',
+    shifts: INITIAL_SHIFTS,
+    draggingId: null,
+    dragOverKey: null,
+    panelOpen: false,
+    viewShiftId: null,
+    selectedDay: 4,
+    form: { personId: 'mf', event: EVENTS[0].name, role: '', day: 4, start: '09:00', end: '17:00', location: EVENTS[0].venue, notes: '' }
+  };
+
+  toggleDept(d) {
+    this.setState(s => {
+      const next = new Set(s.activeDepts);
+      next.has(d) ? next.delete(d) : next.add(d);
+      return { activeDepts: next };
+    });
+  }
+
+  moveShift(shiftId, personId, day) {
+    this.setState(s => ({ shifts: s.shifts.map(sh => sh.id === shiftId ? { ...sh, personId, day } : sh) }));
+  }
+
+  saveShift() {
+    const f = this.state.form;
+    if (!f.role.trim() || !f.start || !f.end) return;
+    const ev = EVENTS.find(e => e.name === f.event);
+    const newShift = { id: SHIFT_SEQ++, personId: f.personId, day: Number(f.day), start: f.start, end: f.end, event: f.event, role: f.role, color: ev ? ev.color : '#A8A199' };
+    this.setState(s => ({ shifts: [...s.shifts, newShift], panelOpen: false, form: { ...f, role: '', notes: '' } }));
+  }
+
+  renderVals() {
+    const { view, activeDepts, eventFilter, personQuery, shifts, draggingId, dragOverKey, panelOpen, selectedDay, form, role, showFullTeam, viewShiftId } = this.state;
+    const isAdmin = role === 'Admin';
+    const isEmployee = role === 'Employee';
+    const myShiftsOnly = isEmployee && !showFullTeam;
+
+    const navList = isAdmin ? [...NAV.slice(0, -1), { key: 'people', label: 'Pessoas', href: './Organizza People.dc.html' }, NAV[NAV.length - 1]] : NAV;
+    const navItems = navList.map(n => ({
+      label: n.label, icon: NAV_ICONS[n.key] || PEOPLE_ICON, onClick: n.href ? () => { window.location.href = n.href; } : undefined,
+      style: `display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:4px;cursor:pointer;font-size:14px;font-weight:${n.active ? 500 : 400};color:${n.active ? '#1C1A17' : '#6B655D'};background:${n.active ? '#8A9A7B14' : 'transparent'};transition:background 180ms ease-out;`
+    }));
+
+    const viewOptions = ['Dia', 'Semana', 'Mês'].map(v => {
+      const active = view === v;
+      return { label: v, onClick: () => this.setState({ view: v }), style: `font-family:inherit;font-size:12px;font-weight:500;padding:6px 14px;border:none;border-radius:4px;cursor:pointer;background:${active ? '#8A9A7B' : 'transparent'};color:${active ? '#FFFFFF' : '#6B655D'};transition:background 180ms ease-out;` };
+    });
+
+    const deptChips = DEPTS.map(d => {
+      const active = activeDepts.has(d);
+      return { label: d, onClick: () => this.toggleDept(d), style: `font-family:inherit;font-size:12px;font-weight:500;padding:7px 14px;border-radius:100px;cursor:pointer;transition:background 180ms ease-out;border:1px solid ${active ? DEPT_COLORS[d] : '#E8E3DC'};background:${active ? DEPT_COLORS[d] + '1A' : '#FFFFFF'};color:${active ? DEPT_COLORS[d] : '#A8A199'};` };
+    });
+
+    const eventOptions = ['Todos', ...EVENTS.map(e => e.name)];
+
+    // conflict detection: same person, overlapping day+time from different events
+    function overlaps(a, b) {
+      return a.day === b.day && a.personId === b.personId && a.id !== b.id &&
+        (a.start < b.end && b.start < a.end);
+    }
+    const conflictIds = new Set();
+    shifts.forEach(a => shifts.forEach(b => { if (overlaps(a, b)) { conflictIds.add(a.id); conflictIds.add(b.id); } }));
+
+    const q = personQuery.trim().toLowerCase();
+    const visiblePeople = PEOPLE.filter(p => activeDepts.has(p.dept) && (!q || p.name.toLowerCase().includes(q)) && (!myShiftsOnly || p.id === CURRENT_EMPLOYEE_ID));
+
+    const groups = DEPTS.map(d => ({ label: d, people: visiblePeople.filter(p => p.dept === d) })).filter(g => g.people.length);
+
+    const cellKey = (pid, day) => pid + '-' + day;
+
+    groups.forEach(g => {
+      g.people = g.people.map(p => {
+        const totalHours = shifts.filter(s => s.personId === p.id).reduce((sum, s) => sum + hoursOf(s.start, s.end), 0);
+        const days = WEEKDAYS.map((_, dayIdx) => {
+          const cellShifts = shifts.filter(s => s.personId === p.id && s.day === dayIdx && (eventFilter === 'Todos' || s.event === eventFilter));
+          const unavailable = p.unavailable.includes(dayIdx) && cellShifts.length === 0;
+          const key = cellKey(p.id, dayIdx);
+          const isDragOver = dragOverKey === key;
+          return {
+            shifts: cellShifts.map(s => ({
+              ...s, time: s.start + '–' + s.end,
+              conflict: conflictIds.has(s.id),
+              tooltip: conflictIds.has(s.id) ? 'Conflito: agendado em dois eventos ao mesmo horário' : `${s.event} · ${s.role} · ${s.start}–${s.end}`,
+              draggable: isAdmin,
+              onDragStart: isAdmin ? () => this.setState({ draggingId: s.id }) : undefined,
+              onDragEnd: isAdmin ? () => this.setState({ draggingId: null, dragOverKey: null }) : undefined,
+              onClick: isAdmin ? undefined : () => this.setState({ viewShiftId: s.id }),
+              style: `border-left:3px solid ${conflictIds.has(s.id) ? '#C4703F' : s.color};background:${conflictIds.has(s.id) ? '#C4703F0D' : '#FFFFFF'};border:1px solid ${conflictIds.has(s.id) ? '#C4703F55' : '#E8E3DC'};border-left-width:3px;border-radius:4px;padding:5px 8px;margin-bottom:3px;cursor:${isAdmin ? (draggingId === s.id ? 'grabbing' : 'grab') : 'default'};opacity:${draggingId === s.id ? 0.5 : 1};box-shadow:${draggingId === s.id ? '0 6px 16px rgba(28,26,23,0.18)' : 'none'};transition:box-shadow 180ms ease-out;`
+            })),
+            onDragOver: (e) => e.preventDefault(),
+            onDragEnter: () => this.setState({ dragOverKey: key }),
+            onDragLeave: () => this.setState(s2 => s2.dragOverKey === key ? { dragOverKey: null } : {}),
+            onDrop: () => { if (draggingId != null) this.moveShift(draggingId, p.id, dayIdx); this.setState({ draggingId: null, dragOverKey: null }); },
+            style: unavailable
+              ? `padding:6px 6px; border-right:1px solid #E8E3DC; background:repeating-linear-gradient(135deg, #EFEAE1 0 6px, #F4F0E9 6px 12px); min-height:52px;`
+              : `padding:6px 6px; border-right:1px solid #E8E3DC; background:${isDragOver ? '#8A9A7B0F' : 'transparent'}; outline:${isDragOver ? '1.5px dashed #8A9A7B' : 'none'}; outline-offset:-2px; min-height:52px;`
+          };
+        });
+        return { ...p, days, totalHours, avatarStyle: `width:26px;height:26px;border-radius:50%;background:${DEPT_COLORS[p.dept]}1F;color:${DEPT_COLORS[p.dept]};font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;` };
+      });
+    });
+
+    const days = WEEKDAYS.map((w, i) => ({ weekday: w, date: WEEK_DATES[i] }));
+
+    // day view
+    const dayShifts = shifts.filter(s => s.day === selectedDay && (eventFilter === 'Todos' || s.event === eventFilter)).map(s => {
+      const p = PEOPLE.find(pp => pp.id === s.personId);
+      return { person: p.name, initials: p.initials, role: s.role, event: s.event, time: s.start + '–' + s.end, color: s.color, avatarStyle: `width:32px;height:32px;border-radius:50%;background:${DEPT_COLORS[p.dept]}1F;color:${DEPT_COLORS[p.dept]};font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;` };
+    });
+
+    // month view (August 2026)
+    const first = new Date(2026, 7, 1);
+    const startOffset = (first.getDay() + 6) % 7; // Monday-first
+    const daysInMonth = 31;
+    const monthCells = [];
+    for (let i = 0; i < startOffset; i++) monthCells.push({ day: '', style: 'background:#FAF8F5;min-height:64px;' });
+    for (let d = 1; d <= daysInMonth; d++) {
+      const count = shifts.filter(s => s.day === (d - 10) && d >= 10 && d <= 16).length;
+      const inDataWeek = d >= 10 && d <= 16;
+      monthCells.push({
+        day: d, hasShifts: inDataWeek && count > 0, count,
+        textColor: d === 7 ? '#C4703F' : '#1C1A17',
+        style: `background:#FFFFFF;min-height:64px;padding:6px;`
+      });
+    }
+    while (monthCells.length % 7 !== 0) monthCells.push({ day: '', style: 'background:#FAF8F5;min-height:64px;' });
+
+    const viewShiftRaw = viewShiftId != null ? shifts.find(s => s.id === viewShiftId) : null;
+    const viewShift = viewShiftRaw ? { ...viewShiftRaw, personName: (PEOPLE.find(pp => pp.id === viewShiftRaw.personId) || {}).name || '', time: viewShiftRaw.start + '–' + viewShiftRaw.end } : null;
+
+    return {
+      profileMenuOpen: this.state.profileMenuOpen, toggleProfileMenu: () => this.setState(s => ({ profileMenuOpen: !s.profileMenuOpen })), closeProfileMenu: () => this.setState({ profileMenuOpen: false }),
+      profileName: isAdmin ? 'Ana Costa' : 'Miguel Ferreira', profileEmail: isAdmin ? 'ana.costa@organizza.pt' : 'miguel.ferreira@organizza.pt', profileInitials: isAdmin ? 'AC' : 'MF',
+      goToSettings: () => { window.location.href = './Organizza Definições.dc.html'; },
+      logout: () => { localStorage.removeItem('organizza_role'); window.location.href = './Organizza Login.dc.html'; },
+      role, onRoleChange: (e) => { localStorage.setItem('organizza_role', e.target.value); this.setState({ role: e.target.value }); }, isAdmin, isEmployee,
+      viewShift, closeShiftView: () => this.setState({ viewShiftId: null }), stopProp: (e) => e.stopPropagation(),
+      toggleFullTeam: () => this.setState(s => ({ showFullTeam: !s.showFullTeam })),
+      fullTeamLabel: showFullTeam ? 'Ver apenas os meus turnos' : 'Ver equipa completa (leitura)',
+      navItems, viewOptions, deptChips, eventOptions,
+      eventFilter, onEventFilterChange: (e) => this.setState({ eventFilter: e.target.value }),
+      personQuery, onPersonQueryChange: (e) => this.setState({ personQuery: e.target.value }),
+      openPanel: () => this.setState({ panelOpen: true }),
+      closePanel: () => this.setState({ panelOpen: false }),
+      isWeek: view === 'Semana', isDay: view === 'Dia', isMonth: view === 'Mês',
+      days, groups,
+      selectedDayLabel: `${WEEKDAYS[selectedDay]}, ${WEEK_DATES[selectedDay]} de agosto de 2026`,
+      dayShifts,
+      monthLabel: 'Agosto 2026',
+      weekdayLabels: WEEKDAYS,
+      monthCells,
+      peopleOptions: PEOPLE,
+      eventNameOptions: EVENTS.map(e => e.name),
+      dayOptions: WEEKDAYS.map((w, i) => ({ value: i, label: `${w} · ${WEEK_DATES[i]}` })),
+      form: {
+        ...form,
+        onPersonChange: (e) => this.setState(s => ({ form: { ...s.form, personId: e.target.value } })),
+        onEventChange: (e) => { const ev = EVENTS.find(x => x.name === e.target.value); this.setState(s => ({ form: { ...s.form, event: e.target.value, location: ev ? ev.venue : s.form.location } })); },
+        onRoleChange: (e) => this.setState(s => ({ form: { ...s.form, role: e.target.value } })),
+        onDayChange: (e) => this.setState(s => ({ form: { ...s.form, day: e.target.value } })),
+        onStartChange: (e) => this.setState(s => ({ form: { ...s.form, start: e.target.value } })),
+        onEndChange: (e) => this.setState(s => ({ form: { ...s.form, end: e.target.value } })),
+        onLocationChange: (e) => this.setState(s => ({ form: { ...s.form, location: e.target.value } })),
+        onNotesChange: (e) => this.setState(s => ({ form: { ...s.form, notes: e.target.value } }))
+      },
+      saveShift: () => this.saveShift(),
+      backdropStyle: `position:fixed;inset:0;background:rgba(28,26,23,${panelOpen ? 0.32 : 0});pointer-events:${panelOpen ? 'auto' : 'none'};transition:background 240ms ease-out;z-index:40;`,
+      panelStyle: `position:fixed;top:0;right:0;height:100vh;width:420px;background:#FFFFFF;border-left:1px solid #E8E3DC;box-shadow:-8px 0 24px rgba(28,26,23,0.12);display:flex;flex-direction:column;transform:translateX(${panelOpen ? '0' : '100%'});transition:transform 240ms ease-out;z-index:50;`
+    };
+  }
+}
+
+</script>
+</body>
+</html>

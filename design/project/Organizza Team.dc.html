@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="./image-slot.js"></script>
+  <style>
+    body { margin: 0; background: #FAF8F5; }
+    * { box-sizing: border-box; }
+    input::placeholder { color: #A8A199; }
+    select { font-family: inherit; }
+    .om-scroll::-webkit-scrollbar { width: 6px; }
+    .om-scroll::-webkit-scrollbar-thumb { background: #E8E3DC; border-radius: 4px; }
+    :focus-visible { outline: 2px solid #8A9A7B; outline-offset: 2px; }
+  </style>
+</helmet>
+
+<div style="font-family:'Inter',sans-serif; color:#1C1A17; background:#FAF8F5; width:1440px; min-height:900px;">
+
+  <!-- ============ DESKTOP MODE ============ -->
+  <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;">
+      <aside style="width:240px; flex-shrink:0; border-right:1px solid #E8E3DC; display:flex; flex-direction:column; padding:24px 16px; gap:32px;">
+        <div style="font-family:'Fraunces',serif; font-size:19px; font-weight:500;">Organizza</div>
+        <nav style="display:flex; flex-direction:column; gap:4px;">
+          <sc-for list="{{ navItems }}" as="item" hint-placeholder-count="6">
+            <div onClick="{{ item.onClick }}" style-hover="background:#8A9A7B10;" style="{{ item.style }}">
+              <span style="flex-shrink:0; display:flex;" dangerously-set-inner-h-t-m-l="{{ item.icon }}"></span>
+              <span style="white-space:nowrap;">{{ item.label }}</span>
+            </div>
+          </sc-for>
+        </nav>
+      </aside>
+
+      <main style="flex:1; min-width:0;">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 40px; border-bottom:1px solid #E8E3DC;">
+          <div style="display:flex; align-items:center; gap:8px; background:#FFFFFF; border:1px solid #E8E3DC; border-radius:4px; padding:8px 12px; width:280px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8A199" stroke-width="1.8"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input placeholder="Pesquisar" style="border:none; outline:none; font-size:13px; font-family:inherit; width:100%; background:transparent; color:#1C1A17;"></input>
+          </div>
+          <div style="display:flex; align-items:center; gap:20px;">
+            <div style="font-size:13px; color:#6B655D;">Sexta-feira, 7 de agosto de 2026</div>
+            <div style="position:relative;">
+              <div onClick="{{ toggleProfileMenu }}" style="width:30px;height:30px;border-radius:50%;background:#8A9A7B1F;color:#8A9A7B;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;cursor:pointer;">{{ profileInitials }}</div>
+              <sc-if value="{{ profileMenuOpen }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ closeProfileMenu }}" style="position:fixed; inset:0; z-index:40;"></div>
+                <div style="position:absolute; top:38px; right:0; width:220px; background:#FFFFFF; border:1px solid #E8E3DC; border-radius:8px; box-shadow:0 8px 24px rgba(28,26,23,0.10); z-index:50; overflow:hidden;">
+                  <div style="padding:14px 16px; border-bottom:1px solid #F1EEE8;">
+                    <div style="font-size:13px; font-weight:500;">{{ profileName }}</div>
+                    <div style="font-size:12px; color:#A8A199;">{{ profileEmail }}</div>
+                  </div>
+                  <div onClick="{{ goToSettings }}" style-hover="background:#FAF8F5;" style="padding:10px 16px; font-size:13px; cursor:pointer;">Definições</div>
+                  <div onClick="{{ logout }}" style-hover="background:#FAF8F5;" style="padding:10px 16px; font-size:13px; color:#C4703F; cursor:pointer; border-top:1px solid #F1EEE8;">Terminar sessão</div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEAM LIST -->
+        <sc-if value="{{ isTeamList }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:24px 40px 60px;">
+            <h1 style="font-family:'Fraunces',serif; font-weight:500; font-size:26px; margin:0 0 20px;">Equipa</h1>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:24px; flex-wrap:wrap;">
+              <select value="{{ deptFilter }}" onChange="{{ onDeptFilterChange }}" style="font-size:12px; padding:7px 10px; border:1px solid #E8E3DC; border-radius:4px; background:#FFFFFF; color:#6B655D;">
+                <sc-for list="{{ deptOptions }}" as="dOpt" hint-placeholder-count="6"><option value="{{ dOpt }}">{{ dOpt }}</option></sc-for>
+              </select>
+              <select value="{{ availFilter }}" onChange="{{ onAvailFilterChange }}" style="font-size:12px; padding:7px 10px; border:1px solid #E8E3DC; border-radius:4px; background:#FFFFFF; color:#6B655D;">
+                <sc-for list="{{ availOptions }}" as="aOpt" hint-placeholder-count="4"><option value="{{ aOpt }}">{{ aOpt }}</option></sc-for>
+              </select>
+              <div style="display:flex; align-items:center; gap:6px; background:#FFFFFF; border:1px solid #E8E3DC; border-radius:4px; padding:7px 10px; width:200px;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#A8A199" stroke-width="1.8"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input value="{{ query }}" onChange="{{ onQueryChange }}" placeholder="Procurar pessoa" style="border:none; outline:none; font-size:12px; font-family:inherit; width:100%; background:transparent; color:#1C1A17;"></input>
+              </div>
+              <div style="font-size:12px; color:#A8A199; margin-left:auto;">{{ filteredCount }} de {{ totalCount }}</div>
+            </div>
+
+            <sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:60px 20px; text-align:center;">
+                <div style="font-family:'Fraunces',serif; font-size:20px; font-weight:500; margin-bottom:8px;">Nenhuma pessoa encontrada.</div>
+                <div style="font-size:13px; color:#6B655D; margin-bottom:20px;">Ajuste os filtros de departamento ou disponibilidade.</div>
+                <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+                  <button style="background:#8A9A7B; color:#fff; border:none; border-radius:4px; padding:9px 18px; font-size:13px; font-family:inherit; font-weight:500; cursor:pointer;">Adicionar membro</button>
+                </sc-if>
+              </div>
+            </sc-if>
+            <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px;">
+              <sc-for list="{{ filteredPeople }}" as="p" hint-placeholder-count="12">
+                <div onClick="{{ p.onClick }}" style-hover="border-color:#8A9A7B;" style="border:1px solid #E8E3DC; border-radius:4px; background:#FFFFFF; padding:16px; cursor:pointer; transition:border-color 180ms ease-out;">
+                  <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+                    <div style="{{ p.avatarStyle }}">{{ p.initials }}</div>
+                    <div style="min-width:0;">
+                      <div style="font-size:14px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">{{ p.name }}</div>
+                      <div style="font-size:12px; color:#6B655D;">{{ p.role }}</div>
+                    </div>
+                  </div>
+                  <div style="display:flex; gap:5px; flex-wrap:wrap; margin-bottom:12px;">
+                    <sc-for list="{{ p.skillChips }}" as="s" hint-placeholder-count="3">
+                      <div style="font-size:10px; color:#6B655D; border:1px solid #E8E3DC; border-radius:100px; padding:3px 9px;">{{ s }}</div>
+                    </sc-for>
+                  </div>
+                  <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <div style="display:flex; align-items:center; gap:5px; font-size:11px; color:{{ p.availColor }};">
+                      <div style="width:6px;height:6px;border-radius:50%;background:{{ p.availColor }};"></div>{{ p.availability }}
+                    </div>
+                    <div style="font-size:11px; color:#A8A199; font-variant-numeric:tabular-nums;">{{ p.upcomingCount }} eventos</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <!-- TEAM DETAIL -->
+        <sc-if value="{{ isTeamDetail }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:24px 40px 60px; max-width:1000px;">
+            <div onClick="{{ backToList }}" style="display:flex; align-items:center; gap:6px; font-size:13px; color:#6B655D; cursor:pointer; margin-bottom:20px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B655D" stroke-width="1.8"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              Voltar à equipa
+            </div>
+            <div style="display:flex; gap:20px; align-items:center; margin-bottom:32px;">
+              <div style="{{ detail.avatarStyle }}">{{ detail.initials }}</div>
+              <div>
+                <div style="font-family:'Fraunces',serif; font-size:24px; font-weight:500;">{{ detail.name }}</div>
+                <div style="font-size:14px; color:#6B655D; margin-bottom:6px;">{{ detail.role }} · {{ detail.dept }}</div>
+                <div style="display:flex; gap:14px; font-size:12px; color:#A8A199;">
+                  <span>{{ detail.email }}</span><span>{{ detail.phone }}</span>
+                </div>
+              </div>
+              <div style="margin-left:auto; display:flex; align-items:center; gap:6px; font-size:12px; color:{{ detail.availColor }};">
+                <div style="width:7px;height:7px;border-radius:50%;background:{{ detail.availColor }};"></div>{{ detail.availability }}
+              </div>
+            </div>
+
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:36px;">
+              <sc-for list="{{ detail.skillChips }}" as="ds" hint-placeholder-count="3">
+                <div style="font-size:12px; font-weight:500; padding:6px 13px; border-radius:100px; background:#8A9A7B14; color:#5F6E52;">{{ ds }}</div>
+              </sc-for>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:40px;">
+              <div>
+                <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#A8A199; margin-bottom:14px;">Eventos participados</div>
+                <div style="display:flex; flex-direction:column;">
+                  <sc-for list="{{ detail.events }}" as="ev" hint-placeholder-count="3">
+                    <div style="display:flex; align-items:center; gap:12px; padding:11px 4px 11px 12px; border-bottom:1px solid #E8E3DC; border-left:3px solid {{ ev.statusColor }};">
+                      <div style="flex:1;">
+                        <div style="font-family:'Fraunces',serif; font-size:14px; font-weight:500;">{{ ev.name }}</div>
+                        <div style="font-size:12px; color:#6B655D;">{{ ev.venue }} · {{ ev.dateLabel }}</div>
+                      </div>
+                      <span style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:{{ ev.statusColor }};background:{{ ev.statusBg }};border-radius:100px;padding:4px 10px;white-space:nowrap;">{{ ev.status }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#A8A199; margin:32px 0 14px;">Documentos</div>
+                  <div style="display:flex; flex-direction:column;">
+                    <sc-for list="{{ detail.documents }}" as="doc" hint-placeholder-count="3">
+                      <div style="display:flex; align-items:center; gap:12px; padding:11px 4px; border-bottom:1px solid #E8E3DC;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A8A199" stroke-width="1.6"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><polyline points="14 3 14 9 20 9"></polyline></svg>
+                        <div style="flex:1; font-size:13px;">{{ doc.name }}</div>
+                        <div style="font-size:11px; color:#A8A199; font-variant-numeric:tabular-nums;">{{ doc.date }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+
+              <div>
+                <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#A8A199; margin-bottom:14px;">Disponibilidade — agosto</div>
+                <div style="display:grid; grid-template-columns:repeat(7, 1fr); gap:1px; background:#E8E3DC; border:1px solid #E8E3DC; margin-bottom:32px;">
+                  <sc-for list="{{ weekdayLabels }}" as="wl" hint-placeholder-count="7">
+                    <div style="background:#FFFFFF; padding:5px; font-size:9px; text-transform:uppercase; color:#A8A199; text-align:center;">{{ wl }}</div>
+                  </sc-for>
+                  <sc-for list="{{ detail.availCells }}" as="c" hint-placeholder-count="35">
+                    <div style="{{ c.style }}">{{ c.day }}</div>
+                  </sc-for>
+                </div>
+
+                <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+                <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#A8A199; margin-bottom:14px;">Notas</div>
+                <div style="display:flex; flex-direction:column; gap:14px;">
+                  <sc-for list="{{ detail.notes }}" as="n" hint-placeholder-count="2">
+                    <div>
+                      <div style="display:flex; gap:8px; align-items:baseline; margin-bottom:3px;"><span style="font-size:12px; font-weight:500;">{{ n.author }}</span><span style="font-size:11px; color:#A8A199;">{{ n.time }}</span></div>
+                      <div style="font-size:13px; color:#1C1A17; line-height:1.5;">{{ n.text }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </main>
+    </div>
+  </sc-if>
+
+  <!-- ============ MOBILE MODE ============ -->
+  <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex; justify-content:center; padding:40px 0 60px; background:#EFEAE1;">
+      <div style="width:390px; height:844px; background:#1C1A17; border-radius:48px; padding:12px; box-shadow:0 20px 50px rgba(28,26,23,0.25); flex-shrink:0;">
+        <div style="width:100%; height:100%; background:#FAF8F5; border-radius:36px; overflow:hidden; display:flex; flex-direction:column; position:relative;">
+
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 24px 6px; font-size:14px; font-weight:600; font-variant-numeric:tabular-nums;">
+            <span>09:41</span>
+            <div style="width:100px; height:28px; background:#1C1A17; border-radius:14px; position:absolute; top:8px; left:50%; transform:translateX(-50%);"></div>
+            <span>100%</span>
+          </div>
+
+          <div style="padding:14px 20px 4px;">
+            <div style="font-family:'Fraunces',serif; font-size:20px; font-weight:500;">{{ mobileTitle }}</div>
+          </div>
+
+          <div class="om-scroll" style="flex:1; overflow-y:auto; padding:8px 20px 20px;">
+
+            <sc-if value="{{ isMobAgenda }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex; flex-direction:column;">
+                <sc-for list="{{ todaySchedule }}" as="it" hint-placeholder-count="6">
+                  <div style="display:flex; gap:14px; padding:14px 0; border-bottom:1px solid #E8E3DC;">
+                    <div style="width:52px; flex-shrink:0; font-size:13px; font-weight:600; color:#1C1A17; font-variant-numeric:tabular-nums;">{{ it.time }}</div>
+                    <div style="flex:1;">
+                      <div style="font-size:14px; margin-bottom:2px;">{{ it.label }}</div>
+                      <div style="font-size:12px; color:#A8A199;">{{ it.person }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isMobFicha }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:13px; color:#6B655D; margin-bottom:12px;">Casamento Sofia &amp; Pedro · Quinta da Torre</div>
+              <div style="display:flex; flex-direction:column;">
+                <sc-for list="{{ runsheet }}" as="rs" hint-placeholder-count="5">
+                  <div style="display:flex; gap:14px; padding:14px 0; border-bottom:1px solid #E8E3DC;">
+                    <div style="width:52px; flex-shrink:0; font-size:13px; font-weight:600; font-variant-numeric:tabular-nums;">{{ rs.time }}</div>
+                    <div style="flex:1;">
+                      <div style="font-size:14px; margin-bottom:2px;">{{ rs.label }}</div>
+                      <div style="font-size:12px; color:#A8A199;">{{ rs.owner }} · {{ rs.duration }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isMobTarefas }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex; flex-direction:column;">
+                <sc-for list="{{ mobTasks }}" as="task" hint-placeholder-count="6">
+                  <div style="display:flex; align-items:center; gap:14px; padding:13px 0; border-bottom:1px solid #E8E3DC;">
+                    <div onClick="{{ task.onToggle }}" style="{{ task.checkStyle }}">
+                      <sc-if value="{{ task.done }}" hint-placeholder-val="{{ false }}">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      </sc-if>
+                    </div>
+                    <div style="{{ task.textStyle }}">{{ task.label }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ isMobContactos }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex; flex-direction:column;">
+                <sc-for list="{{ contacts }}" as="ct" hint-placeholder-count="8">
+                  <div style="display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid #E8E3DC;">
+                    <div style="{{ ct.avatarStyle }}">{{ ct.initials }}</div>
+                    <div style="flex:1;">
+                      <div style="font-size:14px;">{{ ct.name }}</div>
+                      <div style="font-size:12px; color:#A8A199;">{{ ct.role }}</div>
+                    </div>
+                    <a href="{{ ct.telHref }}" style="width:44px; height:44px; border-radius:50%; background:#8A9A7B14; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A9A7B" stroke-width="1.8"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.4 1.8.7 2.7a2 2 0 01-.4 2.1L8 9.9a16 16 0 006 6l1.4-1.4a2 2 0 012.1-.4c.9.3 1.8.6 2.7.7a2 2 0 011.8 2z"></path></svg>
+                    </a>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+          </div>
+
+          <div style="display:flex; border-top:1px solid #E8E3DC; background:#FFFFFF; padding:8px 8px 4px;">
+            <sc-for list="{{ mobTabs }}" as="t" hint-placeholder-count="4">
+              <button onClick="{{ t.onClick }}" style="{{ t.style }}">
+                <span dangerously-set-inner-h-t-m-l="{{ t.icon }}"></span>
+                <span style="font-size:10px;">{{ t.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <div style="height:6px; display:flex; justify-content:center; align-items:center;">
+            <div style="width:120px; height:4px; border-radius:3px; background:#1C1A17;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const NAV_ICONS = {
+  dashboard: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="8" height="8" rx="1"></rect><rect x="13" y="3" width="8" height="8" rx="1"></rect><rect x="3" y="13" width="8" height="8" rx="1"></rect><rect x="13" y="13" width="8" height="8" rx="1"></rect></svg>',
+  schedule: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>',
+  events: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="17" rx="1"></rect><line x1="3" y1="9" x2="21" y2="9"></line></svg>',
+  team: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.4"></circle><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"></path><path d="M14.5 15c2.6.3 4.5 2.2 4.5 5"></path></svg>',
+  documents: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"></path><polyline points="14 3 14 9 20 9"></polyline></svg>',
+  settings: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>'
+};
+
+const MOB_ICONS = {
+  agenda: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>',
+  ficha: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="17" rx="1"></rect><line x1="3" y1="9" x2="21" y2="9"></line></svg>',
+  tarefas: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path></svg>',
+  contactos: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.4"></circle><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"></path><path d="M14.5 15c2.6.3 4.5 2.2 4.5 5"></path></svg>'
+};
+
+const PEOPLE_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="11" width="14" height="9" rx="1"></rect><path d="M8 11V7a4 4 0 018 0v4"></path></svg>';
+const AVAIL_COLORS = { 'Disponível': '#8A9A7B', 'Ocupado': '#B8A88A', 'Ausente': '#A8A199' };
+const STATUS_COLORS = { 'Planeamento': '#B8A88A', 'Produção': '#8A9A7B', 'Concluído': '#A8A199', 'Cancelado': '#8A7F6E' };
+const STATUS_BG = { 'Planeamento': '#B8A88A1A', 'Produção': '#8A9A7B1A', 'Concluído': '#A8A1991A', 'Cancelado': '#D6CFC680' };
+
+const PEOPLE = [
+  { id: 'ac', name: 'Ana Costa', role: 'Gestora de Eventos', dept: 'Produção', initials: 'AC', skills: ['Coordenação', 'Relação com Clientes', 'Orçamentação'], availability: 'Disponível', upcomingCount: 4, email: 'ana.costa@organizza.pt', phone: '+351 912 345 001' },
+  { id: 'mf', name: 'Miguel Ferreira', role: 'Coordenador de Produção', dept: 'Produção', initials: 'MF', skills: ['Montagem', 'Logística', 'Gestão de Equipas'], availability: 'Ocupado', upcomingCount: 3, email: 'miguel.ferreira@organizza.pt', phone: '+351 912 345 002' },
+  { id: 'ro', name: 'Rui Oliveira', role: 'Técnico de Produção', dept: 'Produção', initials: 'RO', skills: ['Montagem Técnica', 'Som'], availability: 'Ocupado', upcomingCount: 2, email: 'rui.oliveira@organizza.pt', phone: '+351 912 345 003' },
+  { id: 'rp', name: 'Rita Pereira', role: 'Decoration Designer', dept: 'Decoração', initials: 'RP', skills: ['Florals', 'Styling', 'Set Design'], availability: 'Disponível', upcomingCount: 3, email: 'rita.pereira@organizza.pt', phone: '+351 912 345 004' },
+  { id: 'ir', name: 'Inês Rodrigues', role: 'Designer Floral', dept: 'Decoração', initials: 'IR', skills: ['Arranjos Florais', 'Composição', 'Sazonalidade'], availability: 'Disponível', upcomingCount: 2, email: 'ines.rodrigues@organizza.pt', phone: '+351 912 345 005' },
+  { id: 'bs', name: 'Beatriz Santos', role: 'Assistente de Decoração', dept: 'Decoração', initials: 'BS', skills: ['Styling', 'Montagem'], availability: 'Ausente', upcomingCount: 1, email: 'beatriz.santos@organizza.pt', phone: '+351 912 345 006' },
+  { id: 'ta', name: 'Tiago Alves', role: 'Técnico de Iluminação', dept: 'Logística', initials: 'TA', skills: ['Iluminação', 'Som', 'Efeitos'], availability: 'Ocupado', upcomingCount: 3, email: 'tiago.alves@organizza.pt', phone: '+351 912 345 007' },
+  { id: 'pn', name: 'Pedro Nunes', role: 'Logística', dept: 'Logística', initials: 'PN', skills: ['Transporte', 'Fornecedores', 'Carga'], availability: 'Disponível', upcomingCount: 2, email: 'pedro.nunes@organizza.pt', phone: '+351 912 345 008' },
+  { id: 'jr', name: 'João Ribeiro', role: 'Logística', dept: 'Logística', initials: 'JR', skills: ['Transporte', 'Coordenação de Fornecedores'], availability: 'Disponível', upcomingCount: 2, email: 'joao.ribeiro@organizza.pt', phone: '+351 912 345 009' },
+  { id: 'sm', name: 'Sofia Martins', role: 'Designer Gráfico', dept: 'Design', initials: 'SM', skills: ['Identidade Visual', 'Convites', 'Sinalética'], availability: 'Disponível', upcomingCount: 2, email: 'sofia.martins@organizza.pt', phone: '+351 912 345 010' },
+  { id: 'cg', name: 'Catarina Gomes', role: 'Designer Gráfico', dept: 'Design', initials: 'CG', skills: ['Apresentações', 'Digital'], availability: 'Ausente', upcomingCount: 1, email: 'catarina.gomes@organizza.pt', phone: '+351 912 345 011' },
+  { id: 'at', name: 'Ana Teixeira', role: 'Freelancer', dept: 'Freelancers', initials: 'AT', skills: ['Apoio no Local', 'Hospedagem'], availability: 'Disponível', upcomingCount: 1, email: 'ana.teixeira@organizza.pt', phone: '+351 912 345 012' },
+  { id: 'bn', name: 'Bruno Nogueira', role: 'Freelancer', dept: 'Freelancers', initials: 'BN', skills: ['Apoio no Local', 'Segurança'], availability: 'Disponível', upcomingCount: 1, email: 'bruno.nogueira@organizza.pt', phone: '+351 912 345 013' }
+];
+
+const PERSON_EVENTS = {
+  ac: [{ name: 'Casamento Sofia & Pedro', venue: 'Quinta da Torre', date: '14/08/2026', status: 'Produção' }, { name: 'Catarina & João', venue: 'Quinta de Sintra', date: '18/10/2026', status: 'Planeamento' }],
+  mf: [{ name: 'Casamento Sofia & Pedro', venue: 'Quinta da Torre', date: '14/08/2026', status: 'Produção' }, { name: 'Sonae — Diretores', venue: 'Tivoli Palácio', date: '03/10/2026', status: 'Cancelado' }],
+  rp: [{ name: 'Beatriz & Rui', venue: 'Quinta de Sintra', date: '29/08/2026', status: 'Planeamento' }, { name: 'Miguel & Ana', venue: 'Quinta da Torre', date: '25/07/2026', status: 'Concluído' }]
+};
+const PERSON_DOCS = {
+  ac: [{ name: 'Contrato_Prestacao_Servicos.pdf', date: '02/01/2026' }, { name: 'Certificado_Formacao_Eventos.pdf', date: '15/03/2025' }],
+  mf: [{ name: 'Contrato_Prestacao_Servicos.pdf', date: '02/01/2026' }],
+  rp: [{ name: 'Portfolio_Decoracao_2026.pdf', date: '10/02/2026' }]
+};
+const PERSON_NOTES = {
+  ac: [{ author: 'Miguel Ferreira', time: '3 de agosto', text: 'Excelente coordenação com o fornecedor floral no último evento.' }],
+  mf: [{ author: 'Ana Costa', time: '1 de agosto', text: 'Confirmar disponibilidade para a semana de outubro antes de agendar Catarina & João.' }],
+  rp: [{ author: 'Ana Costa', time: '28 de julho', text: 'Referência para o cliente: portfolio muito bem recebido na última reunião.' }]
+};
+
+const TODAY_SCHEDULE = [
+  { time: '08:00', label: 'Chegada da equipa — Quinta da Torre', person: 'Pedro Nunes' },
+  { time: '09:30', label: 'Entrega de flores', person: 'Inês Rodrigues' },
+  { time: '11:00', label: 'Reunião com cliente EDP', person: 'Ana Costa' },
+  { time: '14:00', label: 'Montagem da decoração — Sofia & Pedro', person: 'Rita Pereira, Tiago Alves' },
+  { time: '17:00', label: 'Prova de menu com catering', person: 'Ana Costa' },
+  { time: '19:30', label: 'Verificação final de iluminação', person: 'Tiago Alves' }
+];
+
+const RUNSHEET = [
+  { time: '08:00', label: 'Chegada da equipa', owner: 'Pedro Nunes', duration: '1h' },
+  { time: '10:00', label: 'Montagem da decoração', owner: 'Rita Pereira, Tiago Alves', duration: '4h' },
+  { time: '14:00', label: 'Preparação final', owner: 'Ana Costa', duration: '2h' },
+  { time: '18:00', label: 'Chegada dos convidados', owner: 'Ana Costa', duration: '—' },
+  { time: '02:00', label: 'Encerramento e desmontagem', owner: 'Pedro Nunes', duration: '—' }
+];
+
+class Component extends DCLogic {
+  state = {
+    profileMenuOpen: false,
+    role: (localStorage.getItem('organizza_role') || 'Admin'),
+    mode: 'Desktop', teamScreen: 'List', selectedId: 'ac',
+    deptFilter: 'Todos', availFilter: 'Todos', query: '',
+    mobTab: 'agenda',
+    mobTasks: [
+      { id: 1, label: 'Confirmar entrega de flores', done: true },
+      { id: 2, label: 'Verificar montagem da tenda', done: true },
+      { id: 3, label: 'Testar som e iluminação', done: false },
+      { id: 4, label: 'Confirmar chegada do catering', done: false },
+      { id: 5, label: 'Preparar mesa de assinaturas', done: false }
+    ]
+  };
+
+  toggleMobTask(id) { this.setState(s => ({ mobTasks: s.mobTasks.map(t => t.id === id ? { ...t, done: !t.done } : t) })); }
+
+  renderVals() {
+    const { mode, teamScreen, selectedId, deptFilter, availFilter, query, mobTab, mobTasks, role } = this.state;
+    const isAdmin = role === 'Admin';
+
+    const modeOptions = ['Desktop', 'Mobile'].map(m => {
+      const active = mode === m;
+      return { label: m, onClick: () => this.setState({ mode: m }), style: `font-family:inherit;font-size:12px;font-weight:500;padding:6px 16px;border:none;border-radius:4px;cursor:pointer;background:${active ? '#8A9A7B' : 'transparent'};color:${active ? '#FFFFFF' : '#6B655D'};transition:background 150ms ease-out;` };
+    });
+
+    const navDefs = [
+      { key: 'dashboard', label: 'Dashboard', href: './Organizza Events Dashboard.dc.html' }, { key: 'schedule', label: 'Calendário', href: './Organizza Schedule.dc.html' }, { key: 'events', label: 'Eventos', href: './Organizza Events Dashboard.dc.html' },
+      { key: 'team', label: 'Equipa', active: true }, { key: 'documents', label: 'Documentos' }
+    ];
+    if (isAdmin) navDefs.push({ key: 'people', label: 'Pessoas', href: './Organizza People.dc.html' });
+    const navItems = navDefs.map(n => ({ label: n.label, icon: NAV_ICONS[n.key] || PEOPLE_ICON, onClick: n.href ? () => { window.location.href = n.href; } : (n.key === 'team' ? () => this.setState({ teamScreen: 'List' }) : undefined),
+      style: `display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:4px;cursor:pointer;font-size:14px;font-weight:${n.active ? 500 : 400};color:${n.active ? '#1C1A17' : '#6B655D'};background:${n.active ? '#8A9A7B14' : 'transparent'};transition:background 180ms ease-out;` }));
+
+    const q = query.trim().toLowerCase();
+    const filteredPeople = PEOPLE.filter(p => (deptFilter === 'Todos' || p.dept === deptFilter) && (availFilter === 'Todos' || p.availability === availFilter) && (!q || p.name.toLowerCase().includes(q)))
+      .map(p => ({ ...p, imgId: 'team-' + p.id, availColor: AVAIL_COLORS[p.availability], skillChips: p.skills, onClick: () => this.setState({ teamScreen: 'Detail', selectedId: p.id }) }));
+
+    const person = PEOPLE.find(p => p.id === selectedId) || PEOPLE[0];
+    const first = new Date(2026, 7, 1);
+    const startOffset = (first.getDay() + 6) % 7;
+    const availCells = [];
+    for (let i = 0; i < startOffset; i++) availCells.push({ day: '', style: 'background:#FAF8F5;min-height:34px;' });
+    for (let d = 1; d <= 31; d++) {
+      const busy = (d + person.id.length) % 4 === 0;
+      availCells.push({ day: d, style: `background:${busy ? '#B8A88A1A' : '#8A9A7B0D'}; color:${busy ? '#B8A88A' : '#5F6E52'}; min-height:34px; padding:4px; font-size:11px; text-align:center; font-variant-numeric:tabular-nums;` });
+    }
+    while (availCells.length % 7 !== 0) availCells.push({ day: '', style: 'background:#FAF8F5;min-height:34px;' });
+
+    const detail = {
+      ...person, imgId: 'team-detail-' + person.id, availColor: AVAIL_COLORS[person.availability], skillChips: person.skills,
+      events: (PERSON_EVENTS[person.id] || []).map(e => ({ ...e, dateLabel: e.date, statusColor: STATUS_COLORS[e.status], statusBg: STATUS_BG[e.status] })),
+      documents: PERSON_DOCS[person.id] || [], notes: PERSON_NOTES[person.id] || [], availCells
+    };
+
+    const contacts = PEOPLE.map(p => ({ initials: p.initials, name: p.name, role: p.role, telHref: 'tel:' + p.phone.replace(/\s/g, ''), avatarStyle: `width:40px;height:40px;border-radius:50%;background:#8A9A7B1F;color:#8A9A7B;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;` }));
+
+    const mobTabsDef = [
+      { key: 'agenda', label: 'Agenda' }, { key: 'ficha', label: 'Ficha' }, { key: 'tarefas', label: 'Tarefas' }, { key: 'contactos', label: 'Contactos' }
+    ];
+    const mobTabs = mobTabsDef.map(t => {
+      const active = mobTab === t.key;
+      return { label: t.label, icon: MOB_ICONS[t.key], onClick: () => this.setState({ mobTab: t.key }),
+        style: `flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:transparent;color:${active ? '#8A9A7B' : '#A8A199'};cursor:pointer;padding:6px 0;min-height:44px;font-family:inherit;` };
+    });
+    const titles = { agenda: 'Agenda de hoje', ficha: 'Ficha do evento', tarefas: 'Tarefas', contactos: 'Contactos' };
+
+    const mobTasksVals = mobTasks.map(t => ({
+      ...t, onToggle: () => this.toggleMobTask(t.id),
+      checkStyle: `width:26px;height:26px;border-radius:4px;border:1.5px solid ${t.done ? '#8A9A7B' : '#E8E3DC'};background:${t.done ? '#8A9A7B' : '#FFFFFF'};display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;`,
+      textStyle: `flex:1;font-size:15px;color:${t.done ? '#A8A199' : '#1C1A17'};text-decoration:${t.done ? 'line-through' : 'none'};`
+    }));
+
+    return {
+      profileMenuOpen: this.state.profileMenuOpen, toggleProfileMenu: () => this.setState(s => ({ profileMenuOpen: !s.profileMenuOpen })), closeProfileMenu: () => this.setState({ profileMenuOpen: false }),
+      profileName: isAdmin ? 'Ana Costa' : 'Miguel Ferreira', profileEmail: isAdmin ? 'ana.costa@organizza.pt' : 'miguel.ferreira@organizza.pt', profileInitials: isAdmin ? 'AC' : 'MF',
+      goToSettings: () => { window.location.href = './Organizza Definições.dc.html'; },
+      logout: () => { localStorage.removeItem('organizza_role'); window.location.href = './Organizza Login.dc.html'; },
+      role, onRoleChange: (e) => { localStorage.setItem('organizza_role', e.target.value); this.setState({ role: e.target.value }); }, isAdmin,
+      modeOptions, isDesktop: mode === 'Desktop', isMobile: mode === 'Mobile',
+      navItems, isTeamList: teamScreen === 'List', isTeamDetail: teamScreen === 'Detail',
+      deptOptions: ['Todos', 'Produção', 'Decoração', 'Logística', 'Design', 'Freelancers'],
+      availOptions: ['Todos', 'Disponível', 'Ocupado', 'Ausente'],
+      deptFilter, availFilter, query,
+      onDeptFilterChange: (e) => this.setState({ deptFilter: e.target.value }),
+      onAvailFilterChange: (e) => this.setState({ availFilter: e.target.value }),
+      onQueryChange: (e) => this.setState({ query: e.target.value }),
+      filteredPeople, filteredCount: filteredPeople.length, totalCount: PEOPLE.length,
+      noResults: filteredPeople.length === 0,
+      backToList: () => this.setState({ teamScreen: 'List' }),
+      detail, weekdayLabels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+      mobileTitle: titles[mobTab], mobTabs,
+      isMobAgenda: mobTab === 'agenda', isMobFicha: mobTab === 'ficha', isMobTarefas: mobTab === 'tarefas', isMobContactos: mobTab === 'contactos',
+      todaySchedule: TODAY_SCHEDULE, runsheet: RUNSHEET, mobTasks: mobTasksVals, contacts
+    };
+  }
+}
+
+</script>
+</body>
+</html>
