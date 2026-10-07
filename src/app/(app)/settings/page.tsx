@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { useIsAdmin, useProfile } from "@/components/AppContext";
 import { Avatar } from "@/components/Avatar";
 import { createClient } from "@/lib/supabase/client";
 import type { NotificationPrefs, Profile, Role } from "@/lib/types";
+import { inviteStaffAction } from "./actions";
 
 export default function SettingsPage() {
   const isAdmin = useIsAdmin();
@@ -14,6 +15,14 @@ export default function SettingsPage() {
   const [users, setUsers] = useState<Profile[]>([]);
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<number | null>(null);
+  const [invite, inviteAction, inviting] = useActionState(inviteStaffAction, null);
+  const [reloadKey, setReloadKey] = useState(0);
+  // refresh the user list once an invite succeeds
+  const [seenInvite, setSeenInvite] = useState(invite);
+  if (invite !== seenInvite) {
+    setSeenInvite(invite);
+    if (invite?.ok) setReloadKey((k) => k + 1);
+  }
 
   useEffect(() => {
     (async () => {
@@ -21,11 +30,11 @@ export default function SettingsPage() {
       const { data: p } = await supabase.from("notification_prefs").select("*").eq("profile_id", me.id).maybeSingle();
       setPrefs(p ?? { profile_id: me.id, notif_email: true, notif_sms: false, notif_schedule: true, notif_docs: true });
       if (isAdmin) {
-        const { data: u } = await supabase.from("profiles").select("*").order("full_name");
+        const { data: u } = await supabase.from("profiles").select("*").neq("role", "client").order("full_name");
         setUsers(u ?? []);
       }
     })();
-  }, [me.id, isAdmin]);
+  }, [me.id, isAdmin, reloadKey]);
 
   async function saveProfile() {
     setSaving(true);
@@ -123,6 +132,29 @@ export default function SettingsPage() {
               </div>
             ))}
           </div>
+          <form
+            action={inviteAction}
+            className="flex flex-col gap-3 rounded-md border border-border bg-surface p-5"
+          >
+            <div>
+              <div className="text-sm font-medium">Convidar colaborador</div>
+              <div className="text-xs text-ink-faint">Recebe um email para definir a palavra-passe. Contas novas não têm acesso até serem convidadas aqui.</div>
+            </div>
+            <div className="grid grid-cols-[1fr_1fr_auto] gap-2.5">
+              <input name="full_name" required placeholder="Nome" className="rounded border border-border px-2.5 py-2 text-sm outline-none" />
+              <input name="email" type="email" required placeholder="email@organizza.pt" className="rounded border border-border px-2.5 py-2 text-sm outline-none" />
+              <select name="role" defaultValue="employee" className="rounded border border-border px-2.5 py-2 text-sm">
+                <option value="employee">Colaborador</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <div className={`text-xs ${invite?.ok ? "text-sage" : "text-terracotta"}`}>{invite?.message}</div>
+              <button disabled={inviting} className="shrink-0 rounded bg-sage px-4 py-2 text-sm font-medium text-white hover:bg-sage-hover disabled:opacity-60">
+                {inviting ? "A enviar…" : "Enviar convite"}
+              </button>
+            </div>
+          </form>
         </Section>
       )}
     </div>

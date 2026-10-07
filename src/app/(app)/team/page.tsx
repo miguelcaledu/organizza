@@ -17,7 +17,7 @@ export default function TeamPage() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await createClient().from("profiles").select("*").order("full_name");
+      const { data } = await createClient().from("profiles").select("*").neq("role", "client").order("full_name");
       setPeople(data ?? []);
       setLoading(false);
     })();

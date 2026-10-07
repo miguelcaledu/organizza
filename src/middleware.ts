@@ -2,6 +2,10 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 const PUBLIC_PATHS = ["/login", "/auth"];
+// Couple-facing seating planner: has its own client login (/plano) and checks
+// access per page, so it only needs the session refresh below — never the
+// redirect to the staff login.
+const PLANNER_PATHS = ["/plano", "/api/plans"];
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -30,6 +34,10 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const isPublic = PUBLIC_PATHS.some((p) => request.nextUrl.pathname.startsWith(p));
+
+  if (PLANNER_PATHS.some((p) => request.nextUrl.pathname.startsWith(p))) {
+    return response;
+  }
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone();
