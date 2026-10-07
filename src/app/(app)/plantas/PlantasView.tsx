@@ -81,12 +81,12 @@ export function PlantasView({
       </div>
 
       {!loadError && (
-        <div className="mb-6 grid grid-cols-[repeat(3,minmax(0,180px))_1fr] gap-4">
+        <div className="mb-6 grid grid-cols-3 gap-4 xl:grid-cols-[repeat(3,minmax(0,180px))_1fr]">
           <Stat label="Planos" value={plans.length} />
           <Stat label="Casais com acesso" value={plans.filter((p) => p.client).length} />
           <Stat label="Alterações por rever" value={totalPending} accent={totalPending > 0} />
-          <div className="rounded border border-border bg-surface px-4 py-3">
-            <div className="mb-2 flex items-center justify-between">
+          <div className="col-span-3 rounded border border-border bg-surface px-4 py-3 xl:col-span-1">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
               <div className="text-[11px] tracking-wide text-ink-faint uppercase">Atividade recente dos casais</div>
               <ChangeLegend compact />
             </div>
