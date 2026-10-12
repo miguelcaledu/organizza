@@ -3,7 +3,7 @@
 import { createClient as createPlainClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { blankPlan, samplePlan } from "@/lib/seating/sample";
+import { buildPlanFromSetup, sanitizeSetup } from "@/lib/seating/setup";
 import { createPlan, getViewer, isPlanId, isStaff } from "@/lib/seating/store";
 import { sanitizePlan } from "@/lib/seating/validate";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -65,15 +65,21 @@ async function linkClient(planId: string, rawEmail: string, fullName: string): P
 export async function createPlanAction(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
   try {
     const { db, viewer } = await requireStaff();
-    const title = String(formData.get("title") ?? "").trim() || "Casamento";
-    const date = String(formData.get("date") ?? "") || undefined;
+    // the wizard sends its choices; the plan is rebuilt here rather than trusted from the browser
+    let raw: unknown = {};
+    try {
+      raw = JSON.parse(String(formData.get("setup") ?? "{}"));
+    } catch {}
+    const cfg = sanitizeSetup(raw);
+    const { plan, missing } = buildPlanFromSetup(cfg);
+    const title = plan.title;
     const email = String(formData.get("email") ?? "").trim();
-    const plan = formData.get("start") === "blank" ? blankPlan(title, date) : samplePlan(title, date);
     const planId = await createPlan(db, sanitizePlan(plan), viewer.id);
     revalidatePath("/plantas");
-    if (!email) return { ok: true, message: `Plano “${title}” criado. Pode convidar o casal mais tarde.`, planId };
+    const fitNote = missing ? ` Atenção: ${missing} mesa(s) não couberam na sala — ajuste no plano.` : "";
+    if (!email) return { ok: true, message: `Plano “${title}” criado. Pode convidar o casal mais tarde.${fitNote}`, planId };
     const r = await linkClient(planId, email, title);
-    return { ok: r.ok, message: r.ok ? `Plano “${title}” criado. ${r.message}` : `Plano criado, mas: ${r.message}`, planId };
+    return { ok: r.ok, message: (r.ok ? `Plano “${title}” criado. ${r.message}` : `Plano criado, mas: ${r.message}`) + fitNote, planId };
   } catch (e) {
     return { ok: false, message: e instanceof Error ? e.message : "Erro ao criar o plano." };
   }

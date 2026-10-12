@@ -90,6 +90,8 @@ export interface Plan {
   settings: PlanSettings;
   /** material defaults and spare margins for the folha de obra (staff only) */
   materials?: Materials;
+  /** guest count given when the plan was set up (shown as "x/N previstos") */
+  expectedGuests?: number;
 }
 
 /** A single space projected for the layout tools: its room and items, plus the shared guests. */

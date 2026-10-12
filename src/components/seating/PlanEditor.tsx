@@ -428,6 +428,7 @@ export function PlanEditor({
         )}
         <div className="truncate px-1.5 text-[11px] text-ink-faint">
           {s.tables} mesas · {s.seats} lugares · <span className={s.unseated ? "text-terracotta" : "text-sage"}>{s.seated}/{s.guests} sentados</span>
+          {plan.expectedGuests ? <span className={s.seats < plan.expectedGuests ? "text-terracotta" : ""}> · {plan.expectedGuests} previstos</span> : null}
           {readOnly && <span className="ml-2 rounded-full bg-border-soft px-2 py-px text-ink-soft">só leitura</span>}
         </div>
       </div>

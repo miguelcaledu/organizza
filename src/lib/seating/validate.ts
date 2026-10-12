@@ -149,6 +149,7 @@ export function sanitizePlan(input: unknown): Plan {
     spaces,
     items,
     ...(materials(o.materials) ? { materials: materials(o.materials) } : {}),
+    ...(typeof o.expectedGuests === "number" && o.expectedGuests > 0 ? { expectedGuests: Math.min(5000, Math.round(o.expectedGuests)) } : {}),
     guests,
     settings: {
       snap: typeof st.snap === "boolean" ? st.snap : DEFAULT_SETTINGS.snap,

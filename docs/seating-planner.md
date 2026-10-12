@@ -25,6 +25,23 @@ A tool for laying out a wedding reception room to scale and seating every guest.
 
 - **Deleting plans:** "Eliminar" asks for confirmation, then moves the plan to **Plantas → Lixo**. While it's there, the couple can't see it and its read-only link stops working. Staff can **restore** it, or **delete it permanently** with a second confirmation. After 30 days it's purged automatically, together with its change log. A daily `pg_cron` job does this, and Plantas also purges whenever it loads, as a fallback if `pg_cron` isn't enabled.
 
+## Creating a plan (wizard)
+
+**Plantas → + Novo plano** opens a three-step wizard:
+1. **Evento:** the couple's names, the date, and optionally the couple's email (sends the invite).
+2. **Espaços:** how many rooms the event has and which they are (Cocktail, Cerimónia, Jantar, Festa or another), each with width × length in metres, and which one holds the guest tables.
+3. **Convidados e mesas:**
+   - the number of guests, the table type (Ø160 / Ø180 / rectangular 250) and seats per table
+   - the head table: none, couple (2) or honour table (5)
+   - the number of tables, worked out as (guests − head-table seats) ÷ seats per table and adjustable
+   - extras for the dining room: dance floor, DJ, bar, buffet, cake table
+
+A live preview shows the automatic layout of each space:
+- **Dining room:** head table at the top, the dance floor (5–7 m depending on guest count) with the DJ below it, the bar and buffet on the side walls, and tables packed around them with about 1.9 m between table edges, numbered from the front.
+- **Cocktail** gets a bar and a lounge corner; **Festa** gets a dance floor, DJ and bar. Other spaces start empty.
+
+If tables don't fit, the preview says how many are missing, and **Aumentar a sala para caber** finds the smallest proportional room that fits. The server rebuilds the plan from the same choices; it doesn't take the plan from the browser. The guest count is kept on the plan and shown in the header as "N previstos".
+
 ## Spaces (Cocktail, Jantar, …)
 
 A plan can have several **spaces**, shown as tabs above the plan. Each one has its own room shape, doors and furniture, for example Cocktail, Cerimónia, Jantar or Festa.

@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useState, useTransition } from "react";
-import { SidePanel, Field, inputClass } from "@/components/SidePanel";
+import { useEffect, useState, useTransition } from "react";
 import { ChangeLegend } from "@/components/seating/Panels";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { formatDateLabel } from "@/lib/constants";
 import { TRASH_DAYS } from "@/lib/seating/trash";
 import { CHANGE_COLORS, type ChangeKind } from "@/lib/seating/clientEdits";
-import { createPlanAction, deletePlanAction, inviteClientAction, resendAccessAction, type ActionResult } from "./actions";
+import { NewPlanWizard } from "./NewPlanWizard";
+import { deletePlanAction, inviteClientAction, resendAccessAction, type ActionResult } from "./actions";
 
 export interface PlanRow {
   id: string;
@@ -48,7 +48,6 @@ export function PlantasView({
   loadError: string | null;
 }) {
   const [panelOpen, setPanelOpen] = useState(false);
-  const [created, createAction, creating] = useActionState(createPlanAction, null);
   const [flash, setFlash] = useState<ActionResult>(null);
   const [query, setQuery] = useState("");
 
@@ -154,42 +153,7 @@ export function PlantasView({
         </div>
       )}
 
-      <SidePanel
-        open={panelOpen}
-        title="Novo plano de sala"
-        onClose={() => setPanelOpen(false)}
-        footer={
-          created?.ok && created.planId ? (
-            <Link href={`/plano/p/${created.planId}`} className="flex-1 rounded bg-sage py-2.5 text-center text-sm font-medium text-white hover:bg-sage-hover">
-              Abrir o plano
-            </Link>
-          ) : (
-            <button form="new-plan" disabled={creating} className="flex-1 rounded bg-sage py-2.5 text-sm font-medium text-white hover:bg-sage-hover disabled:opacity-60">
-              {creating ? "A criar…" : "Criar plano"}
-            </button>
-          )
-        }
-      >
-        <form id="new-plan" action={createAction} key={created?.planId ?? "new"} className="flex flex-col gap-4">
-          <Field label="Nomes dos noivos" required>
-            <input name="title" required placeholder="Ana & João" className={inputClass} />
-          </Field>
-          <Field label="Data do casamento">
-            <input name="date" type="date" className={inputClass} />
-          </Field>
-          <Field label="Email do casal (opcional)">
-            <input name="email" type="email" placeholder="ana.joao@email.com" className={inputClass} />
-            <div className="mt-1 text-[11px] text-ink-faint">Recebem um convite para criar a palavra-passe e entrar no plano.</div>
-          </Field>
-          <Field label="Começar com">
-            <select name="start" className={inputClass} defaultValue="sample">
-              <option value="sample">Exemplo pronto (sala 20 × 14 m com mesas)</option>
-              <option value="blank">Sala vazia</option>
-            </select>
-          </Field>
-          <Notice result={created} />
-        </form>
-      </SidePanel>
+      {panelOpen && <NewPlanWizard onClose={() => setPanelOpen(false)} />}
     </div>
   );
 }
