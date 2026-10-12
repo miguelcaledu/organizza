@@ -13,6 +13,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
   if (!profile) redirect("/login");
+  // couples have their own area; the staff app is off-limits
+  if (profile.role === "client") redirect("/plano/conta");
 
   return (
     <AppProvider profile={profile}>

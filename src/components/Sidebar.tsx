@@ -11,6 +11,7 @@ const NAV: { key: IconName; label: string; href: string; adminOnly?: boolean }[]
   { key: "events", label: "Eventos", href: "/events" },
   { key: "team", label: "Equipa", href: "/team" },
   { key: "documents", label: "Documentos", href: "/documents" },
+  { key: "plans", label: "Plantas", href: "/plantas" },
   { key: "people", label: "Pessoas", href: "/people", adminOnly: true },
 ];
 

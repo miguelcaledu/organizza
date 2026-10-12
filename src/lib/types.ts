@@ -1,4 +1,4 @@
-export type Role = "admin" | "employee";
+export type Role = "admin" | "employee" | "client";
 export type EventStatus = "Planeamento" | "Produção" | "Em curso" | "Concluído" | "Cancelado";
 export type ContractType = "Permanente" | "Freelancer";
 export type PersonStatus = "Ativo" | "Inativo";

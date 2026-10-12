@@ -30,7 +30,7 @@ export default function DashboardPage() {
 
       const [{ data: events }, { data: profiles }, { data: shiftsToday }, { data: tasks }] = await Promise.all([
         supabase.from("events").select("*").order("event_date"),
-        supabase.from("profiles").select("id"),
+        supabase.from("profiles").select("id").neq("role", "client"),
         supabase
           .from("shifts")
           .select("start_time, end_time, role_on_shift, profile:profiles!shifts_profile_id_fkey(full_name), event:events(name)")

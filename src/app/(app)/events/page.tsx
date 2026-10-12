@@ -41,7 +41,7 @@ export default function EventsPage() {
     setLoading(true);
     const supabase = createClient();
     const [{ data: profiles }, { data: rows }] = await Promise.all([
-      supabase.from("profiles").select("*").order("full_name"),
+      supabase.from("profiles").select("*").neq("role", "client").order("full_name"),
       supabase
         .from("events")
         .select("*, lead:profiles!events_lead_id_fkey(full_name), event_services(label), event_team(profile_id, profile:profiles!event_team_profile_id_fkey(full_name))"),

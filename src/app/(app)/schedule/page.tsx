@@ -44,7 +44,7 @@ export default function SchedulePage() {
     setLoading(true);
     const supabase = createClient();
     const [{ data: rst }, { data: evs }, { data: sh }] = await Promise.all([
-      supabase.from("profiles").select("*").order("full_name"),
+      supabase.from("profiles").select("*").neq("role", "client").order("full_name"),
       supabase.from("events").select("*").order("event_date"),
       supabase
         .from("shifts")

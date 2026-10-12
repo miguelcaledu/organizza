@@ -36,7 +36,7 @@ export default function EventWorkspacePage({ params }: { params: Promise<{ id: s
       supabase.from("events").select("*").eq("id", id).single(),
       supabase.from("event_services").select("label").eq("event_id", id),
       supabase.from("event_team").select("role_on_event, profile:profiles!event_team_profile_id_fkey(*)").eq("event_id", id),
-      supabase.from("profiles").select("*").order("full_name"),
+      supabase.from("profiles").select("*").neq("role", "client").order("full_name"),
       supabase.from("tasks").select("*").eq("event_id", id).order("deadline"),
       supabase.from("notes").select("*, author:profiles!notes_author_id_fkey(*)").eq("event_id", id).order("created_at"),
       supabase.from("documents").select("*").eq("event_id", id).order("created_at"),

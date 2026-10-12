@@ -8,7 +8,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -18,20 +17,11 @@ export default function LoginPage() {
     setLoading(true);
     const supabase = createClient();
 
-    if (mode === "signin") {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) {
-        setError("Email ou palavra-passe incorretos.");
-        setLoading(false);
-        return;
-      }
-    } else {
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) {
-        setError(error.message);
-        setLoading(false);
-        return;
-      }
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setError("Email ou palavra-passe incorretos.");
+      setLoading(false);
+      return;
     }
     router.push("/dashboard");
     router.refresh();
@@ -43,7 +33,7 @@ export default function LoginPage() {
         <div className="flex flex-col gap-1.5 text-center">
           <div className="font-serif-display text-[26px] font-medium">Organizza</div>
           <div className="text-sm text-ink-soft">
-            {mode === "signin" ? "Inicie sessão para continuar" : "Criar a primeira conta de administrador"}
+            Inicie sessão para continuar
           </div>
         </div>
 
@@ -77,27 +67,19 @@ export default function LoginPage() {
             disabled={loading}
             className="mt-1.5 rounded bg-sage px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-sage-hover disabled:opacity-60"
           >
-            {loading ? "A processar…" : mode === "signin" ? "Entrar" : "Criar conta"}
+            {loading ? "A processar…" : "Entrar"}
           </button>
         </form>
 
-        <button
-          onClick={() => {
-            setMode((m) => (m === "signin" ? "signup" : "signin"));
-            setError("");
-          }}
-          className="text-center text-xs text-ink-soft hover:text-ink"
-        >
-          {mode === "signin" ? (
-            <>
-              Ainda sem conta? <span className="text-sage">Criar a primeira conta de administrador</span>
-            </>
-          ) : (
-            <>
-              Já tem conta? <span className="text-sage">Iniciar sessão</span>
-            </>
-          )}
-        </button>
+        {/* public sign-up is closed: staff are invited by an admin (Definições → Utilizadores) */}
+        <div className="text-center text-xs text-ink-soft">
+          Sem conta? Peça um convite a um administrador.
+          <br />
+          É noivo ou noiva?{" "}
+          <a href="/plano" className="text-sage hover:underline">
+            Entre no vosso plano de sala
+          </a>
+        </div>
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ Originally designed as an HTML/CSS/JS mockup in Claude Design (preserved under [
 
 ## Features
 
-- **Auth** — Supabase email/password. First person to sign up becomes admin; everyone after starts as an employee (promote via Definições → Utilizadores).
+- **Auth** — Supabase email/password. No public sign-up: the first account in an empty project becomes admin; after that admins invite colleagues from Definições → Utilizadores. Any other new account starts with no access.
 - **Dashboard** — live stats, upcoming events, today's shift agenda, overdue-task alerts.
 - **Eventos** — cards / table / calendar views, filters, sorting, New Event panel.
 - **Event Workspace** — Overview, Team, Files (Supabase Storage), Tasks, Notes.
@@ -15,6 +15,7 @@ Originally designed as an HTML/CSS/JS mockup in Claude Design (preserved under [
 - **Pessoas** *(admin-only)* — sensitive HR records: IBAN/NIF masked with reveal, contract details, documents.
 - **Documentos** — company-wide file library by category.
 - **Definições** — profile, notification preferences, admin user-role management.
+- **Plantas** *(staff)* + **Planta & lugares** *(couples, `/plano`)* — wedding floor-plan and seating planner. Staff control every map; invited couples log in to manage guests and seats per table, and every change they make is logged and colour-coded for staff. Read-only link for venues, print/PDF. See [`docs/seating-planner.md`](docs/seating-planner.md).
 
 ## Setup
 
@@ -26,6 +27,7 @@ Originally designed as an HTML/CSS/JS mockup in Claude Design (preserved under [
    - `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` — from Project Settings → API
    - `SUPABASE_SERVICE_ROLE_KEY` — same page, the **secret** key (only used by the seed script, never sent to the browser)
 3. Run [`supabase/schema.sql`](supabase/schema.sql) in the Supabase SQL editor. Creates all tables, RLS policies, and the `documents` storage bucket.
+   Then run [`supabase/seating-plans.sql`](supabase/seating-plans.sql), [`supabase/client-accounts.sql`](supabase/client-accounts.sql) [`supabase/plans-trash.sql`](supabase/plans-trash.sql), [`supabase/lock-signup.sql`](supabase/lock-signup.sql) and [`supabase/harden-functions.sql`](supabase/harden-functions.sql) for the seating planner, closed sign-up and function permissions, and add `<your-site>/plano/definir-password` to Supabase → Authentication → Redirect URLs.
 4. (Optional) Seed demo data — 12-person roster, 9 events, sample tasks/notes/shifts:
    ```bash
    npm run seed
@@ -48,5 +50,4 @@ Not implemented yet, trimmed from the original design for scope:
 - No dedicated Timeline tab on Event Workspace (no backing table)
 - No avatar/cover image uploads
 - Notification preferences are stored but no emails are actually sent
-- Admin adds employees directly (creates their profile) rather than sending an invite email
 - Drag-and-drop shift reassignment is mouse-only (no touch support)

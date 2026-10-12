@@ -39,7 +39,7 @@ export function initialsOf(name: string) {
   return name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 }
 
-export type IconName = "dashboard" | "schedule" | "events" | "team" | "documents" | "settings" | "people" | "search" | "plus" | "close" | "chevronLeft" | "chevronRight" | "check" | "logout";
+export type IconName = "dashboard" | "schedule" | "events" | "team" | "documents" | "settings" | "people" | "search" | "plus" | "close" | "chevronLeft" | "chevronRight" | "check" | "logout" | "plans";
 
 export function Icon({ name, size = 16, className }: { name: IconName; size?: number; className?: string }) {
   const props = {
@@ -131,6 +131,12 @@ export function Icon({ name, size = 16, className }: { name: IconName; size?: nu
       return (
         <svg {...props} strokeWidth={3}>
           <polyline points="20 6 9 17 4 12" />
+        </svg>
+      );
+    case "plans":
+      return (
+        <svg {...props}>
+          <rect x="3" y="3" width="18" height="18" rx="1" /><circle cx="8.5" cy="9" r="2.2" /><circle cx="15.5" cy="15" r="2.2" /><rect x="13" y="6" width="5" height="3" rx="0.5" />
         </svg>
       );
     case "logout":
