@@ -27,7 +27,7 @@ Originally designed as an HTML/CSS/JS mockup in Claude Design (preserved under [
    - `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY` — from Project Settings → API
    - `SUPABASE_SERVICE_ROLE_KEY` — same page, the **secret** key (only used by the seed script, never sent to the browser)
 3. Run [`supabase/schema.sql`](supabase/schema.sql) in the Supabase SQL editor. Creates all tables, RLS policies, and the `documents` storage bucket.
-   Then run [`supabase/seating-plans.sql`](supabase/seating-plans.sql), [`supabase/client-accounts.sql`](supabase/client-accounts.sql) [`supabase/plans-trash.sql`](supabase/plans-trash.sql) and [`supabase/lock-signup.sql`](supabase/lock-signup.sql) for the seating planner and closed sign-up, and add `<your-site>/plano/definir-password` to Supabase → Authentication → Redirect URLs.
+   Then run [`supabase/seating-plans.sql`](supabase/seating-plans.sql), [`supabase/client-accounts.sql`](supabase/client-accounts.sql) [`supabase/plans-trash.sql`](supabase/plans-trash.sql), [`supabase/lock-signup.sql`](supabase/lock-signup.sql) and [`supabase/harden-functions.sql`](supabase/harden-functions.sql) for the seating planner, closed sign-up and function permissions, and add `<your-site>/plano/definir-password` to Supabase → Authentication → Redirect URLs.
 4. (Optional) Seed demo data — 12-person roster, 9 events, sample tasks/notes/shifts:
    ```bash
    npm run seed
