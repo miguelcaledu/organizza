@@ -31,15 +31,21 @@ export function lOutline(w: number, h: number, cutW: number, cutH: number): Pt[]
   ];
 }
 
-export function blankPlan(title: string, date?: string): Plan {
+export function blankPlan(title: string, date?: string, spaceName = "Sala"): Plan {
   return {
-    version: 1,
+    version: 2,
     title,
     date,
-    room: {
-      outline: rectOutline(2000, 1400),
-      doors: [{ id: uid("d"), wall: 2, offset: 1000, width: 180, label: "Entrada principal" }],
-    },
+    spaces: [
+      {
+        id: uid("s"),
+        name: spaceName,
+        room: {
+          outline: rectOutline(2000, 1400),
+          doors: [{ id: uid("d"), wall: 2, offset: 1000, width: 180, label: "Entrada principal" }],
+        },
+      },
+    ],
     items: [],
     guests: [],
     settings: { ...DEFAULT_SETTINGS },
@@ -72,17 +78,43 @@ const SAMPLE_GUESTS: [string, string][] = [
 ];
 
 /**
- * An 82-seat sample for a 20 × 14 m room, loosely following the reference
- * "cheat sheet": head table at the top, family closest, friends further out.
+ * Two spaces: a 16 × 12 m cocktail area (lounges, stage, photo booth) and an
+ * 82-seat 20 × 14 m dinner room loosely following the reference "cheat
+ * sheet": head table at the top, family closest, friends further out.
  */
 export function samplePlan(title: string, date?: string): Plan {
-  const plan = blankPlan(title, date);
+  const plan = blankPlan(title, date, "Jantar");
+  const dinner = plan.spaces[0];
+  const cocktail = {
+    id: uid("s"),
+    name: "Cocktail",
+    room: { outline: rectOutline(1600, 1200), doors: [{ id: uid("d"), wall: 2, offset: 800, width: 180, label: "Entrada" }] },
+  };
   const items: PlanItem[] = [];
+  let spaceId = cocktail.id;
   const add = (kind: PlanItem["kind"], x: number, y: number, label: string, patch: Partial<PlanItem> = {}) => {
-    const it = { ...newItem(kind, uid("i"), { x, y }, label), ...patch };
+    const it = { ...newItem(kind, uid("i"), { x, y }, label, spaceId), ...patch };
     items.push(it);
     return it;
   };
+
+  // ── cocktail ──
+  add("stage", 800, 165, "Palco", { w: 400, h: 250 });
+  add("decor", 540, 100, "Arranjo floral");
+  add("decor", 1060, 100, "Arranjo floral");
+  add("bar", 1530, 400, "Bar", { w: 300, h: 70, rotation: 90 });
+  add("sofa", 300, 300, "Sofá");
+  // armchairs face each other across the lounge (backrest = local top edge)
+  add("armchair", 160, 450, "Poltrona", { rotation: 270 });
+  add("armchair", 440, 450, "Poltrona", { rotation: 90 });
+  add("decor", 80, 80, "Planta", { w: 70, h: 70 });
+  add("sofa", 1250, 1100, "Sofá", { rotation: 180 });
+  add("armchair", 1100, 950, "Poltrona", { rotation: 270 });
+  add("armchair", 1400, 950, "Poltrona", { rotation: 90 });
+  add("photobooth", 200, 1030, "Photobooth");
+
+  // ── dinner ──
+  spaceId = dinner.id;
 
   const head = add("rect250", 1000, 160, "Mesa dos noivos", { seats: 2, seatSides: "one" });
   add("danceFloor", 1000, 560, "Pista de dança", { w: 600, h: 400 });
@@ -92,15 +124,16 @@ export function samplePlan(title: string, date?: string): Plan {
 
   let n = 1;
   const table = (kind: PlanItem["kind"], x: number, y: number) => add(kind, x, y, `Mesa ${n++}`);
-  const t1 = table("round180", 430, 330);
-  const t2 = table("round180", 1570, 330);
-  table("round180", 430, 680);
-  table("round180", 1570, 680);
+  const t1 = table("round180", 430, 280);
+  const t2 = table("round180", 1570, 280);
+  table("round180", 430, 740);
+  table("round180", 1570, 740);
   table("round160", 430, 1060);
   table("round160", 740, 1170);
   table("round160", 1260, 1170);
   table("round160", 1570, 1060);
   add("rect250", 1000, 1120, `Mesa ${n++}`, { rotation: 90, seats: 8 });
+  add("cakeTable", 1350, 170, "Bolo");
 
   const guests: Guest[] = SAMPLE_GUESTS.map(([name, group]) => ({ id: uid("g"), name, group, seat: null }));
   // seat the two families at tables 1 & 2, leave friends/colleagues for the couple to place
@@ -111,5 +144,5 @@ export function samplePlan(title: string, date?: string): Plan {
     { id: uid("g"), name: "João (noivo)", group: "Noivos", seat: { tableId: head.id, index: 1 } },
   );
 
-  return { ...plan, items, guests };
+  return { ...plan, spaces: [cocktail, dinner], items, guests };
 }

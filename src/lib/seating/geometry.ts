@@ -1,5 +1,5 @@
-import { CHAIR_ZONE, isTable, seatGeometry, toWorld } from "./catalog";
-import type { Door, Plan, PlanItem, Pt } from "./types";
+import { CHAIR_ZONE, isTable, KINDS, seatGeometry, toWorld } from "./catalog";
+import type { Door, SpacePlan, PlanItem, Pt } from "./types";
 
 // ─────────────────────────────────────────────────────────────────────────
 // Polygon helpers + layout warnings. Every item footprint is a convex polygon
@@ -96,7 +96,7 @@ function circlePoly(r: number, n = 24): Pt[] {
 /** Local-space footprint including the space chairs need. */
 export function localFootprint(item: PlanItem): Pt[] {
   const hasSeats = isTable(item) && (item.seats ?? 0) > 0;
-  if (item.kind === "round160" || item.kind === "round180") {
+  if (item.kind === "round160" || item.kind === "round180" || KINDS[item.kind].round) {
     return circlePoly(item.w / 2 + (hasSeats ? CHAIR_ZONE : 0));
   }
   let left = -item.w / 2, right = item.w / 2, top = -item.h / 2, bottom = item.h / 2;
@@ -157,7 +157,7 @@ export type Warning =
   | { kind: "overlap"; itemIds: [string, string]; message: string }
   | { kind: "door"; itemIds: [string]; message: string };
 
-export function computeWarnings(plan: Plan): Warning[] {
+export function computeWarnings(plan: SpacePlan): Warning[] {
   const out: Warning[] = [];
   const outline = plan.room.outline;
   const fps = plan.items.map((it) => ({ it, fp: footprint(it) }));

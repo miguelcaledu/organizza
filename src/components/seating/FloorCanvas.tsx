@@ -5,7 +5,7 @@ import { KINDS, RECT_WIDTH_MAX, RECT_WIDTH_MIN, toLocal } from "@/lib/seating/ca
 import { bounds, projectOnSegment, snap, wallAt } from "@/lib/seating/geometry";
 import { insertVertex, moveDoorTo, removeVertex, setOutline, updateItem } from "@/lib/seating/ops";
 import type { ChangeHighlights } from "@/lib/seating/clientEdits";
-import type { Plan, Pt, SeatRef } from "@/lib/seating/types";
+import type { Pt, SeatRef, SpacePlan } from "@/lib/seating/types";
 import { PlanDrawing } from "./PlanDrawing";
 
 export interface CanvasHandle {
@@ -51,7 +51,7 @@ export function FloorCanvas({
   onSeatTap,
 }: {
   ref?: Ref<CanvasHandle>;
-  plan: Plan;
+  plan: SpacePlan;
   mode: "items" | "room";
   readOnly?: boolean;
   selectedId: string | null;
@@ -61,7 +61,7 @@ export function FloorCanvas({
   handleScale?: number;
   highlights?: ChangeHighlights;
   onSelect: (id: string | null) => void;
-  onChange?: (plan: Plan, transient: boolean) => void;
+  onChange?: (plan: SpacePlan, transient: boolean) => void;
   onGestureEnd?: () => void;
   onSeatTap?: (seat: SeatRef) => void;
 }) {
@@ -281,7 +281,12 @@ export function FloorCanvas({
       const spec = KINDS[it.kind];
       const l = toLocal(it, w);
       const clamp = (v: number) => Math.min(spec.maxSize ?? 2000, Math.max(spec.minSize ?? 50, s(v)));
-      onChange!(updateItem(p, g.id, { w: clamp(Math.abs(l.x) * 2), h: clamp(Math.abs(l.y) * 2) }), true);
+      if (spec.round) {
+        const d = clamp(Math.max(Math.abs(l.x), Math.abs(l.y)) * 2);
+        onChange!(updateItem(p, g.id, { w: d, h: d }), true);
+      } else {
+        onChange!(updateItem(p, g.id, { w: clamp(Math.abs(l.x) * 2), h: clamp(Math.abs(l.y) * 2) }), true);
+      }
     } else if (g.type === "width") {
       const it = p.items.find((i) => i.id === g.id);
       if (!it) return;

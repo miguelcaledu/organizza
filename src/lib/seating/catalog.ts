@@ -31,6 +31,8 @@ export interface KindSpec {
   maxSeats?: number;
   fill: string;
   stroke: string;
+  /** round features are resized by diameter (w = h) */
+  round?: boolean;
 }
 
 export const KINDS: Record<ItemKind, KindSpec> = {
@@ -111,10 +113,86 @@ export const KINDS: Record<ItemKind, KindSpec> = {
     fill: "#E7EAF0",
     stroke: "#6B7B9A",
   },
+  stage: {
+    label: "Palco",
+    short: "Palco",
+    isTable: false,
+    defaultW: 600,
+    defaultH: 300,
+    minSize: 100,
+    maxSize: 2000,
+    fill: "#E9E4DA",
+    stroke: "#6B655D",
+  },
+  photobooth: {
+    label: "Photobooth",
+    short: "Photobooth",
+    isTable: false,
+    defaultW: 300,
+    defaultH: 300,
+    minSize: 100,
+    maxSize: 1000,
+    fill: "#F3EEF4",
+    stroke: "#9A7BA0",
+  },
+  sofa: {
+    label: "Sofá lounge",
+    short: "Sofá",
+    isTable: false,
+    defaultW: 200,
+    defaultH: 85,
+    minSize: 60,
+    maxSize: 500,
+    fill: "#EFE9DF",
+    stroke: "#A8916E",
+  },
+  armchair: {
+    label: "Poltrona",
+    short: "Poltrona",
+    isTable: false,
+    defaultW: 85,
+    defaultH: 85,
+    minSize: 50,
+    maxSize: 200,
+    fill: "#EFE9DF",
+    stroke: "#A8916E",
+  },
+  decor: {
+    label: "Planta / arranjo floral",
+    short: "Decoração",
+    isTable: false,
+    defaultW: 80,
+    defaultH: 80,
+    minSize: 30,
+    maxSize: 400,
+    fill: "#E3EBDC",
+    stroke: "#7C8C6E",
+    round: true,
+  },
+  cakeTable: {
+    label: "Mesa do bolo",
+    short: "Bolo",
+    isTable: false,
+    defaultW: 90,
+    defaultH: 90,
+    minSize: 50,
+    maxSize: 250,
+    fill: "#FBF3EE",
+    stroke: "#C4703F",
+    round: true,
+  },
 };
 
 export const TABLE_KINDS: TableKind[] = ["round160", "round180", "rect250"];
 export const FEATURE_KINDS = ["danceFloor", "bar", "buffet", "dj"] as const;
+
+/** Palette groups, in display order. */
+export const PALETTE: { title: string; kinds: ItemKind[] }[] = [
+  { title: "Mesas", kinds: TABLE_KINDS },
+  { title: "Espaços", kinds: ["danceFloor", "bar", "buffet", "dj", "stage", "photobooth"] },
+  { title: "Lounge", kinds: ["sofa", "armchair"] },
+  { title: "Decoração", kinds: ["decor", "cakeTable"] },
+];
 
 export function isTable(item: Pick<PlanItem, "kind">): boolean {
   return KINDS[item.kind].isTable;
@@ -186,9 +264,10 @@ export function toLocal(item: Pick<PlanItem, "x" | "y" | "rotation">, p: Pt): Pt
   return rotatePt({ x: p.x - item.x, y: p.y - item.y }, -item.rotation);
 }
 
-export function newItem(kind: ItemKind, id: string, at: Pt, label: string): PlanItem {
+/** `spaceId` may be left empty when the item is created inside a SpacePlan; mergeSpace fills it in. */
+export function newItem(kind: ItemKind, id: string, at: Pt, label: string, spaceId = ""): PlanItem {
   const spec = KINDS[kind];
-  const item: PlanItem = { id, kind, x: at.x, y: at.y, rotation: 0, w: spec.defaultW, h: spec.defaultH, label };
+  const item: PlanItem = { id, spaceId, kind, x: at.x, y: at.y, rotation: 0, w: spec.defaultW, h: spec.defaultH, label };
   if (spec.isTable) {
     item.seats = spec.defaultSeats;
     if (kind === "rect250") item.seatSides = "both";

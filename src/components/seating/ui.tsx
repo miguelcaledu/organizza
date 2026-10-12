@@ -73,6 +73,7 @@ export function CommitInput({
   placeholder,
   disabled,
   ariaLabel,
+  list,
 }: {
   value: string;
   onCommit: (v: string) => void;
@@ -80,6 +81,8 @@ export function CommitInput({
   placeholder?: string;
   disabled?: boolean;
   ariaLabel?: string;
+  /** id of a <datalist> with suggestions */
+  list?: string;
 }) {
   const [draft, setDraft] = useState(value);
   // resync when the value changes from outside (undo, another panel)
@@ -95,6 +98,7 @@ export function CommitInput({
     <input
       aria-label={ariaLabel}
       className={className}
+      list={list}
       value={draft}
       placeholder={placeholder}
       disabled={disabled}
@@ -193,7 +197,7 @@ export function Segmented<T extends string>({ value, options, onChange }: { valu
 
 type IconName =
   | "undo" | "redo" | "share" | "print" | "copy" | "trash" | "rotate" | "plus" | "minus" | "fit" | "grid" | "magnet"
-  | "users" | "room" | "item" | "alert" | "check" | "close" | "drag" | "eye" | "list" | "map" | "tag";
+  | "users" | "room" | "item" | "alert" | "check" | "close" | "drag" | "eye" | "list" | "map" | "tag" | "box";
 
 export function I({ name, size = 16 }: { name: IconName; size?: number }) {
   const p = { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.7, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
@@ -220,6 +224,7 @@ export function I({ name, size = 16 }: { name: IconName; size?: number }) {
     case "eye": return <svg {...p}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" /><circle cx="12" cy="12" r="3" /></svg>;
     case "list": return <svg {...p}><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" /></svg>;
     case "map": return <svg {...p}><path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4z" /><path d="M8 2v16M16 6v16" /></svg>;
+    case "box": return <svg {...p}><path d="M21 8 12 3 3 8v8l9 5 9-5z" /><path d="m3 8 9 5 9-5M12 13v8" /></svg>;
     case "tag": return <svg {...p}><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z" /><circle cx="7" cy="7" r="1.5" /></svg>;
   }
 }

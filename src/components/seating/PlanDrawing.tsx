@@ -3,7 +3,7 @@
 import { CHAIR_D, CHAIR_W, formatM, isTable, KINDS, seatGeometry, toWorld } from "@/lib/seating/catalog";
 import { bounds, dist, doorInward, localFootprint, wallAt } from "@/lib/seating/geometry";
 import { CHANGE_COLORS, type ChangeHighlights } from "@/lib/seating/clientEdits";
-import type { Guest, Plan, PlanItem } from "@/lib/seating/types";
+import type { Guest, PlanItem, SpacePlan } from "@/lib/seating/types";
 
 // Pure SVG rendering of a plan in world units (cm). Interactive bits are tagged
 // with data-* attributes (data-item, data-seat, data-handle, data-vertex,
@@ -45,7 +45,7 @@ export function PlanDrawing({
   layoutEditable = true,
   highlights,
 }: {
-  plan: Plan;
+  plan: SpacePlan;
   mode: DrawingMode;
   /** false hides move/rotate/resize handles (clients, read-only) */
   layoutEditable?: boolean;
@@ -281,7 +281,9 @@ function ItemShape({
   interactive: boolean;
 }) {
   const spec = KINDS[item.kind];
-  const round = item.kind === "round160" || item.kind === "round180";
+  const round = item.kind === "round160" || item.kind === "round180" || !!spec.round;
+  // too small for a label; the shape says it all
+  const quiet = item.kind === "decor" || item.kind === "armchair";
   const table = spec.isTable;
   const seats = table ? seatGeometry(item) : [];
   const stroke = warn ? TERRA : spec.stroke;
@@ -344,29 +346,15 @@ function ItemShape({
         );
       })}
 
-      {round ? (
-        <circle r={item.w / 2} fill={spec.fill} stroke={stroke} strokeWidth={warn ? 2 : 1.4} vectorEffect="non-scaling-stroke" />
-      ) : (
-        <rect
-          x={-item.w / 2}
-          y={-item.h / 2}
-          width={item.w}
-          height={item.h}
-          rx={table ? 4 : 6}
-          fill={item.kind === "danceFloor" ? "url(#parquet)" : spec.fill}
-          stroke={stroke}
-          strokeWidth={warn ? 2 : 1.4}
-          vectorEffect="non-scaling-stroke"
-        />
-      )}
+      <ItemBody item={item} fill={spec.fill} stroke={stroke} strokeWidth={warn ? 2 : 1.4} round={round} table={table} />
 
       {/* label, counter-rotated to stay upright */}
-      <g transform={`rotate(${-item.rotation})`} style={{ pointerEvents: "none", fontFamily: "var(--font-inter), sans-serif" }}>
+      <g transform={`rotate(${-item.rotation})`} style={{ pointerEvents: "none", fontFamily: "var(--font-inter), sans-serif", display: quiet ? "none" : undefined }}>
         <text y={table ? -labelFs * 0.15 : -labelFs * 0.1} fontSize={labelFs} textAnchor="middle" dominantBaseline="middle" fill={INK} style={{ fontFamily: "var(--font-fraunces), serif" }}>
           {item.label}
         </text>
-        <text y={labelFs * 0.85} fontSize={labelFs * 0.6} textAnchor="middle" dominantBaseline="middle" fill="#8A7F6E">
-          {table ? `${used}/${item.seats ?? 0}` : `${formatM(item.w)} × ${formatM(item.h)}`.replace(/ m ×/, " ×")}
+        <text y={labelFs * 0.85} fontSize={labelFs * 0.6} textAnchor="middle" dominantBaseline="middle" fill="#8A7F6E" display={round && !table ? "none" : undefined}>
+          {table ? `${used}/${item.seats ?? 0}` : round ? `Ø ${formatM(item.w)}` : `${formatM(item.w)} × ${formatM(item.h)}`.replace(/ m ×/, " ×")}
         </text>
       </g>
 
@@ -401,5 +389,82 @@ function ItemShape({
         </g>
       )}
     </g>
+  );
+}
+
+/** The furniture itself, in local coordinates (centre at 0,0, unrotated). */
+function ItemBody({ item, fill, stroke, strokeWidth, round, table }: { item: PlanItem; fill: string; stroke: string; strokeWidth: number; round: boolean; table: boolean }) {
+  const w = item.w, h = item.h;
+  const line = { stroke, strokeWidth, vectorEffect: "non-scaling-stroke" as const, fill };
+  const thin = { stroke, strokeWidth: 1, vectorEffect: "non-scaling-stroke" as const, fill: "none" };
+
+  switch (item.kind) {
+    case "sofa":
+    case "armchair": {
+      // seat facing +y: backrest along the top edge, armrests on both sides
+      const back = Math.min(h * 0.3, 28), arm = Math.min(w * 0.14, 22);
+      const cushions = item.kind === "sofa" ? Math.max(2, Math.round((w - 2 * arm) / 70)) : 1;
+      const cw = (w - 2 * arm) / cushions;
+      return (
+        <g>
+          <rect x={-w / 2} y={-h / 2} width={w} height={h} rx={10} {...line} />
+          <rect x={-w / 2} y={-h / 2} width={w} height={back} rx={8} {...line} fill="#E2D7C4" />
+          <rect x={-w / 2} y={-h / 2} width={arm} height={h} rx={8} {...line} fill="#E2D7C4" />
+          <rect x={w / 2 - arm} y={-h / 2} width={arm} height={h} rx={8} {...line} fill="#E2D7C4" />
+          {Array.from({ length: cushions - 1 }, (_, i) => (
+            <line key={i} x1={-w / 2 + arm + cw * (i + 1)} x2={-w / 2 + arm + cw * (i + 1)} y1={-h / 2 + back} y2={h / 2 - 4} {...thin} />
+          ))}
+        </g>
+      );
+    }
+    case "stage":
+      return (
+        <g>
+          <rect x={-w / 2} y={-h / 2} width={w} height={h} rx={4} {...line} />
+          {/* front edge of the stage */}
+          <line x1={-w / 2} x2={w / 2} y1={h / 2 - 12} y2={h / 2 - 12} {...thin} strokeDasharray="6 4" />
+        </g>
+      );
+    case "photobooth":
+      return (
+        <g>
+          <rect x={-w / 2} y={-h / 2} width={w} height={h} rx={6} {...line} strokeDasharray="10 6" />
+          {/* backdrop along the back wall */}
+          <rect x={-w / 2 + 12} y={-h / 2 + 10} width={w - 24} height={14} rx={3} fill={stroke} opacity={0.35} />
+        </g>
+      );
+    case "decor": {
+      // plant / flower arrangement seen from above: a ring of leaves around a centre
+      const r = w / 2, n = 7;
+      return (
+        <g>
+          {Array.from({ length: n }, (_, i) => {
+            const a = (360 * i) / n;
+            return <ellipse key={i} cx={0} cy={-r * 0.5} rx={r * 0.32} ry={r * 0.5} transform={`rotate(${a})`} fill={fill} stroke={stroke} strokeWidth={1} vectorEffect="non-scaling-stroke" />;
+          })}
+          <circle r={r * 0.28} fill="#F4E3D7" stroke="#C4703F" strokeWidth={1} vectorEffect="non-scaling-stroke" />
+        </g>
+      );
+    }
+    case "cakeTable":
+      return (
+        <g>
+          <circle r={w / 2} {...line} />
+          <circle r={w * 0.24} {...thin} fill="#FFFFFF" />
+          <circle r={w * 0.14} {...thin} />
+        </g>
+      );
+  }
+  if (round) return <circle r={w / 2} {...line} />;
+  return (
+    <rect
+      x={-w / 2}
+      y={-h / 2}
+      width={w}
+      height={h}
+      rx={table ? 4 : 6}
+      {...line}
+      fill={item.kind === "danceFloor" ? "url(#parquet)" : fill}
+    />
   );
 }

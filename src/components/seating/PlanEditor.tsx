@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
-import { FEATURE_KINDS, KINDS, TABLE_KINDS } from "@/lib/seating/catalog";
+import { KINDS, PALETTE, isTable } from "@/lib/seating/catalog";
 import { computeWarnings } from "@/lib/seating/geometry";
-import { addItem, assignSeat, deleteItem, duplicateItem, reconcileGuests, seatLabel, stats, updateItem } from "@/lib/seating/ops";
-import type { Guest, ItemKind, Plan, SeatRef } from "@/lib/seating/types";
+import { addItem, addSpace, allWarnings, assignSeat, deleteItem, duplicateItem, mergeSpace, moveSpace, reconcileGuests, removeSpace, renameSpace, seatLabel, spaceView, stats, updateItem } from "@/lib/seating/ops";
+import type { Guest, ItemKind, Plan, SeatRef, SpacePlan } from "@/lib/seating/types";
 import { FloorCanvas, type CanvasHandle } from "./FloorCanvas";
 import { useRouter } from "next/navigation";
 import { markReviewedAction } from "@/app/(app)/plantas/actions";
@@ -12,9 +12,12 @@ import { highlightsFrom, type PlanChange } from "@/lib/seating/clientEdits";
 import { ChangeLegend, ChangesPanel, GuestsPanel, ItemPanel, RoomPanel, TablesOverview, WarningsPanel } from "./Panels";
 import { PrintSheet } from "./PrintSheet";
 import { SignOutButton } from "./ClientAuth";
+import { SpacesBar } from "./SpacesBar";
+import { MaterialPanel } from "./MaterialPanels";
+import { DEFAULT_MATERIALS } from "@/lib/seating/materials";
 import { Btn, CommitInput, I } from "./ui";
 
-type Tab = "room" | "item" | "guests" | "warnings" | "tables" | "changes";
+type Tab = "room" | "item" | "guests" | "warnings" | "tables" | "changes" | "material";
 type SaveState = "saved" | "dirty" | "saving" | "error" | "signedOut";
 type MobileTab = "plan" | "room" | "tables" | "guests";
 
@@ -109,10 +112,15 @@ export function PlanEditor({
   const [paletteDrag, setPaletteDrag] = useState<{ kind: ItemKind; x: number; y: number; over: boolean } | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  const warnings = useMemo(() => computeWarnings(plan), [plan]);
+  // the space (Cocktail, Jantar…) currently shown; layout tools work on this projection
+  const [spaceId, setSpaceId] = useState(() => (initial.spaces.find((sp) => initial.items.some((i) => i.spaceId === sp.id && isTable(i))) ?? initial.spaces[0]).id);
+  const view = useMemo(() => spaceView(plan, spaceId), [plan, spaceId]);
+  const activeSpace = view.spaceId;
+  const warnings = useMemo(() => computeWarnings(view), [view]);
+  const allWarns = useMemo(() => allWarnings(plan), [plan]);
   const warnIds = useMemo(() => new Set(warnings.flatMap((w) => w.itemIds as string[])), [warnings]);
   const s = useMemo(() => stats(plan), [plan]);
-  const selected = plan.items.find((i) => i.id === selectedId) ?? null;
+  const selected = view.items.find((i) => i.id === selectedId) ?? null;
   const roomMode = staff && !isMobile && tab === "room";
 
   const notify = useCallback((msg: string) => setToast({ msg, id: Date.now() }), []);
@@ -139,8 +147,11 @@ export function PlanEditor({
     [readOnly, notify, syncHist],
   );
 
+  const commitView = useCallback((next: SpacePlan) => commit(mergeSpace(planRef.current, next)), [commit]);
+
   const onCanvasChange = useCallback(
-    (next: Plan, transient: boolean) => {
+    (nextView: SpacePlan, transient: boolean) => {
+      const next = mergeSpace(planRef.current, nextView);
       if (!transient) return commit(next);
       if (!gestureBase.current) gestureBase.current = planRef.current;
       planRef.current = next;
@@ -221,6 +232,8 @@ export function PlanEditor({
 
   // ── actions ────────────────────────────────────────────────────────────
   function select(id: string | null) {
+    const owner = id ? planRef.current.items.find((i) => i.id === id)?.spaceId : undefined;
+    if (owner && owner !== activeSpace) setSpaceId(owner);
     setSelectedId(id);
     if (id && staff && (tab === "warnings" || tab === "room")) setTab("item");
     if (id && !readOnly && !staff && tab !== "guests") setTab("item");
@@ -249,8 +262,9 @@ export function PlanEditor({
 
   function add(kind: ItemKind, dropAt?: { x: number; y: number }) {
     const at = dropAt ?? canvas.current?.center() ?? { x: 500, y: 500 };
-    const { plan: next, id } = addItem(planRef.current, kind, at, !!dropAt);
-    commit(next);
+    const doc = planRef.current;
+    const { plan: next, id } = addItem(spaceView(doc, activeSpace), kind, at, !!dropAt, doc.items);
+    commitView(next);
     setSelectedId(id);
     setTab("item");
   }
@@ -285,9 +299,10 @@ export function PlanEditor({
 
   function duplicate() {
     if (!selectedId) return;
-    const r = duplicateItem(planRef.current, selectedId);
+    const doc = planRef.current;
+    const r = duplicateItem(spaceView(doc, activeSpace), selectedId, doc.items);
     if (r) {
-      commit(r.plan);
+      commitView(r.plan);
       setSelectedId(r.id);
     }
   }
@@ -440,10 +455,42 @@ export function PlanEditor({
     </header>
   );
 
+  const seatedIn = (id: string) => {
+    const tables = new Set(plan.items.filter((i) => i.spaceId === id && isTable(i)).map((i) => i.id));
+    return plan.guests.filter((g) => g.seat && tables.has(g.seat.tableId)).length;
+  };
+  const spacesBar = (
+    <SpacesBar
+      spaces={plan.spaces}
+      activeId={activeSpace}
+      editable={staff}
+      seatedIn={seatedIn}
+      onSelect={(id) => {
+        setSpaceId(id);
+        setSelectedId(null);
+      }}
+      onAdd={(name) => {
+        const r = addSpace(planRef.current, name);
+        commit(r.plan);
+        setSpaceId(r.id);
+        setSelectedId(null);
+        if (!isMobile) setTab("room");
+        notify(`Espaço “${r.plan.spaces.at(-1)!.name}” criado — ajuste a sala e acrescente os móveis.`);
+      }}
+      onRename={(id, name) => commit(renameSpace(planRef.current, id, name))}
+      onMove={(id, dir) => commit(moveSpace(planRef.current, id, dir))}
+      onDelete={(id) => {
+        commit(removeSpace(planRef.current, id));
+        setSelectedId(null);
+      }}
+    />
+  );
+
   const canvasEl = (
     <FloorCanvas
+      key={activeSpace}
       ref={canvas}
-      plan={plan}
+      plan={view}
       mode={roomMode ? "room" : "items"}
       readOnly={!staff}
       highlights={highlights}
@@ -571,6 +618,7 @@ export function PlanEditor({
           <div className="relative flex min-h-0 flex-1 flex-col">
             {mobileTab === "plan" && (
               <>
+                {spacesBar}
                 <div className="relative min-h-0 flex-1">
                   {canvasEl}
                   {canvasControls}
@@ -607,9 +655,9 @@ export function PlanEditor({
                       setSheetOpen(false);
                     }}
                     title={selected.label}
-                    subtitle={KINDS[selected.kind].isTable ? `${KINDS[selected.kind].short} · ${selected.seats ?? 0} lugares` : `${KINDS[selected.kind].short} · ${(selected.w / 100).toLocaleString("pt-PT")} × ${(selected.h / 100).toLocaleString("pt-PT")} m`}
+                    subtitle={KINDS[selected.kind].isTable ? `${KINDS[selected.kind].short} · ${selected.seats ?? 0} lugares` : KINDS[selected.kind].round ? `${KINDS[selected.kind].short} · Ø ${(selected.w / 100).toLocaleString("pt-PT")} m` : `${KINDS[selected.kind].short} · ${(selected.w / 100).toLocaleString("pt-PT")} × ${(selected.h / 100).toLocaleString("pt-PT")} m`}
                   >
-                    <ItemPanel plan={plan} item={selected} commit={commit} onDuplicate={duplicate} onDelete={remove} onAssign={assign} warnings={warnings} limited={!staff} />
+                    <ItemPanel plan={view} item={selected} commit={commitView} onDuplicate={duplicate} onDelete={remove} onAssign={assign} warnings={warnings} limited={!staff} materials={staff ? (plan.materials ?? DEFAULT_MATERIALS) : undefined} />
                   </MobileItemSheet>
                 )}
 
@@ -617,7 +665,7 @@ export function PlanEditor({
                   <div className="shrink-0 border-t border-border bg-surface">
                     <div className="px-3 pt-2 text-[11px] text-ink-faint">Arraste para a planta, ou toque para adicionar</div>
                     <div className="flex gap-1 overflow-x-auto px-2 pt-1 pb-2" style={{ touchAction: "pan-x" }}>
-                      {[...TABLE_KINDS, ...FEATURE_KINDS].map((k) => (
+                      {PALETTE.flatMap((g) => g.kinds).map((k) => (
                         <PaletteButton key={k} kind={k} onPointerDown={(e) => startPaletteDrag(k, e)} onKeyboard={() => add(k)} className="w-[76px] shrink-0" />
                       ))}
                     </div>
@@ -627,7 +675,7 @@ export function PlanEditor({
             )}
             {mobileTab === "room" && staff && (
               <div className="h-full overflow-y-auto bg-surface">
-                <RoomPanel plan={plan} commit={commit} compact />
+                <RoomPanel plan={view} commit={commitView} compact />
               </div>
             )}
             {mobileTab === "tables" && (
@@ -681,8 +729,9 @@ export function PlanEditor({
           ["room", "Sala", "room"],
           ["item", "Elemento", "item"],
           ["guests", "Convidados", "users", s.unseated],
-          ["warnings", "Avisos", "alert", warnings.length],
+          ["warnings", "Avisos", "alert", allWarns.length],
           ["changes", "Alterações", "eye", pendingChanges],
+          ["material", "Material", "box"],
         ];
 
   return (
@@ -692,18 +741,20 @@ export function PlanEditor({
         <div className="flex min-h-0 flex-1">
           {staff && (
             <aside className="om-scroll flex w-[84px] shrink-0 flex-col gap-1 overflow-y-auto border-r border-border bg-surface px-1.5 py-3 lg:w-[104px]">
-              <div className="px-1 pb-1 text-center text-[10px] font-medium tracking-[0.12em] text-ink-faint uppercase">Mesas</div>
-              {TABLE_KINDS.map((k) => (
-                <PaletteButton key={k} kind={k} onPointerDown={(e) => startPaletteDrag(k, e)} onKeyboard={() => add(k)} disabled={roomMode} />
-              ))}
-              <div className="mt-2 px-1 pb-1 text-center text-[10px] font-medium tracking-[0.12em] text-ink-faint uppercase">Espaços</div>
-              {FEATURE_KINDS.map((k) => (
-                <PaletteButton key={k} kind={k} onPointerDown={(e) => startPaletteDrag(k, e)} onKeyboard={() => add(k)} disabled={roomMode} />
+              {PALETTE.map((group, gi) => (
+                <div key={group.title} className="flex flex-col gap-1">
+                  <div className={`px-1 pb-1 text-center text-[10px] font-medium tracking-[0.12em] text-ink-faint uppercase ${gi ? "mt-2" : ""}`}>{group.title}</div>
+                  {group.kinds.map((k) => (
+                    <PaletteButton key={k} kind={k} onPointerDown={(e) => startPaletteDrag(k, e)} onKeyboard={() => add(k)} disabled={roomMode} />
+                  ))}
+                </div>
               ))}
             </aside>
           )}
 
-          <main className="relative min-w-0 flex-1">
+          <main className="relative flex min-w-0 flex-1 flex-col">
+            {spacesBar}
+            <div className="relative min-h-0 flex-1">
             {canvasEl}
             {canvasControls}
             {banner}
@@ -715,6 +766,7 @@ export function PlanEditor({
             >
               <I name={panelOpen ? "close" : "list"} size={16} />
             </button>
+            </div>
           </main>
 
           {panelOpen && (
@@ -739,10 +791,10 @@ export function PlanEditor({
                 ))}
               </div>
               <div className="om-scroll min-h-0 flex-1 overflow-y-auto">
-                {tab === "room" && <RoomPanel plan={plan} commit={commit} />}
+                {tab === "room" && <RoomPanel plan={view} commit={commitView} />}
                 {tab === "item" &&
                   (selected ? (
-                    <ItemPanel plan={plan} item={selected} commit={commit} onDuplicate={duplicate} onDelete={remove} onAssign={assign} warnings={warnings} limited={!staff} />
+                    <ItemPanel plan={view} item={selected} commit={commitView} onDuplicate={duplicate} onDelete={remove} onAssign={assign} warnings={warnings} limited={!staff} materials={staff ? (plan.materials ?? DEFAULT_MATERIALS) : undefined} />
                   ) : (
                     <EmptyItem staff={staff} />
                   ))}
@@ -758,10 +810,24 @@ export function PlanEditor({
                     guestMarks={highlights?.guests}
                   />
                 )}
+                {tab === "material" && staff && (
+                  <MaterialPanel
+                    plan={plan}
+                    planId={planId}
+                    onChange={(materials, resetItems) => {
+                      const doc = planRef.current;
+                      const items = resetItems
+                        ? doc.items.map((i) => (i.details ? { ...i, details: i.details.note ? { note: i.details.note } : undefined } : i))
+                        : doc.items;
+                      commit({ ...doc, materials, items });
+                      if (resetItems) notify("Todas as mesas seguem agora o padrão do plano.");
+                    }}
+                  />
+                )}
                 {tab === "changes" && staff && (
                   <ChangesPanel changes={changes ?? []} onReview={markReviewed} reviewing={reviewing} onSelectTable={(id) => setSelectedId(id)} />
                 )}
-                {tab === "warnings" && <WarningsPanel warnings={warnings} onSelect={select} />}
+                {tab === "warnings" && <WarningsPanel warnings={allWarns} onSelect={select} />}
                 {tab === "tables" && <TablesOverview plan={plan} selectedId={selectedId} onSelect={(id) => setSelectedId(id)} />}
               </div>
             </aside>
@@ -887,32 +953,89 @@ function PaletteButton({
 function PaletteIcon({ kind }: { kind: ItemKind }) {
   const spec = KINDS[kind];
   const chair = (x: number, y: number) => <rect key={`${x}${y}`} x={x - 3} y={y - 3} width={6} height={6} rx={1.5} fill="#fff" stroke="#CFC6B6" />;
+  const body = (() => {
+    switch (kind) {
+      case "round160":
+      case "round180":
+        return (
+          <>
+            {Array.from({ length: kind === "round160" ? 8 : 10 }, (_, i) => {
+              const t = (2 * Math.PI * i) / (kind === "round160" ? 8 : 10);
+              return chair(Math.round((20 + Math.cos(t) * 13) * 100) / 100, Math.round((16 + Math.sin(t) * 13) * 100) / 100);
+            })}
+            <circle cx="20" cy="16" r={kind === "round160" ? 8.5 : 9.5} fill="#fff" stroke={spec.stroke} />
+          </>
+        );
+      case "rect250":
+        return (
+          <>
+            {[9, 16, 24, 31].flatMap((x) => [chair(x, 7), chair(x, 25)])}
+            <rect x="4" y="11" width="32" height="10" rx="1" fill="#fff" stroke={spec.stroke} />
+          </>
+        );
+      case "sofa":
+        return (
+          <>
+            <rect x="5" y="9" width="30" height="15" rx="3" fill={spec.fill} stroke={spec.stroke} />
+            <rect x="5" y="9" width="30" height="5" rx="2" fill="#E2D7C4" stroke={spec.stroke} />
+            <rect x="5" y="9" width="5" height="15" rx="2" fill="#E2D7C4" stroke={spec.stroke} />
+            <rect x="30" y="9" width="5" height="15" rx="2" fill="#E2D7C4" stroke={spec.stroke} />
+          </>
+        );
+      case "armchair":
+        return (
+          <>
+            <rect x="11" y="8" width="18" height="17" rx="3" fill={spec.fill} stroke={spec.stroke} />
+            <rect x="11" y="8" width="18" height="5" rx="2" fill="#E2D7C4" stroke={spec.stroke} />
+          </>
+        );
+      case "decor":
+        return (
+          <>
+            {Array.from({ length: 7 }, (_, i) => (
+              <ellipse key={i} cx="20" cy="10.5" rx="3.2" ry="5.5" transform={`rotate(${(360 * i) / 7} 20 16)`} fill={spec.fill} stroke={spec.stroke} />
+            ))}
+            <circle cx="20" cy="16" r="3" fill="#F4E3D7" stroke="#C4703F" />
+          </>
+        );
+      case "cakeTable":
+        return (
+          <>
+            <circle cx="20" cy="16" r="11" fill={spec.fill} stroke={spec.stroke} />
+            <circle cx="20" cy="16" r="5.5" fill="#fff" stroke={spec.stroke} />
+          </>
+        );
+      case "photobooth":
+        return (
+          <>
+            <rect x="9" y="5" width="22" height="22" rx="2" fill={spec.fill} stroke={spec.stroke} strokeDasharray="3 2" />
+            <rect x="12" y="8" width="16" height="3" rx="1" fill={spec.stroke} opacity={0.4} />
+          </>
+        );
+      case "stage":
+        return (
+          <>
+            <rect x="4" y="7" width="32" height="18" rx="1.5" fill={spec.fill} stroke={spec.stroke} />
+            <line x1="4" y1="21" x2="36" y2="21" stroke={spec.stroke} strokeDasharray="2 2" />
+          </>
+        );
+      default:
+        return (
+          <rect
+            x={kind === "danceFloor" ? 8 : 4}
+            y={kind === "danceFloor" ? 4 : 11}
+            width={kind === "danceFloor" ? 24 : 32}
+            height={kind === "danceFloor" ? 24 : 10}
+            rx="2"
+            fill={spec.fill}
+            stroke={spec.stroke}
+          />
+        );
+    }
+  })();
   return (
     <svg width="40" height="32" viewBox="0 0 40 32">
-      {kind === "round160" || kind === "round180" ? (
-        <>
-          {Array.from({ length: kind === "round160" ? 8 : 10 }, (_, i) => {
-            const t = (2 * Math.PI * i) / (kind === "round160" ? 8 : 10);
-            return chair(Math.round((20 + Math.cos(t) * 13) * 100) / 100, Math.round((16 + Math.sin(t) * 13) * 100) / 100);
-          })}
-          <circle cx="20" cy="16" r={kind === "round160" ? 8.5 : 9.5} fill="#fff" stroke={spec.stroke} />
-        </>
-      ) : kind === "rect250" ? (
-        <>
-          {[9, 16, 24, 31].flatMap((x) => [chair(x, 7), chair(x, 25)])}
-          <rect x="4" y="11" width="32" height="10" rx="1" fill="#fff" stroke={spec.stroke} />
-        </>
-      ) : (
-        <rect
-          x={kind === "danceFloor" ? 8 : 4}
-          y={kind === "danceFloor" ? 4 : 11}
-          width={kind === "danceFloor" ? 24 : 32}
-          height={kind === "danceFloor" ? 24 : 10}
-          rx="2"
-          fill={spec.fill}
-          stroke={spec.stroke}
-        />
-      )}
+      {body}
     </svg>
   );
 }

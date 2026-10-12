@@ -6,17 +6,20 @@ import { bounds, dist, signedArea, wallAt, type Warning } from "@/lib/seating/ge
 import { addDoor, removeVertex, replaceOutline, resizeRoom, seatLabel, setOutline, updateItem } from "@/lib/seating/ops";
 import { lOutline, rectOutline, uid } from "@/lib/seating/sample";
 import { CHANGE_COLORS, type PlanChange } from "@/lib/seating/clientEdits";
-import type { Guest, Plan, PlanItem, SeatRef } from "@/lib/seating/types";
+import type { Guest, Plan, PlanItem, SeatRef, SpacePlan } from "@/lib/seating/types";
+import type { Materials } from "@/lib/seating/materials";
+import { ItemDetailsSection } from "./MaterialPanels";
 import { guestsBySeat } from "./PlanDrawing";
 import { Btn, CommitInput, I, inputCls, Label, MetreInput, Section, Segmented, Stepper } from "./ui";
 
 type Commit = (next: Plan) => void;
+type CommitSpace = (next: SpacePlan) => void;
 
 // ─────────────────────────────────────────────────────────────────────────
 // Room
 // ─────────────────────────────────────────────────────────────────────────
 
-export function RoomPanel({ plan, commit, compact }: { plan: Plan; commit: Commit; compact?: boolean }) {
+export function RoomPanel({ plan, commit, compact }: { plan: SpacePlan; commit: CommitSpace; compact?: boolean }) {
   const { outline, doors } = plan.room;
   const b = bounds(outline);
   const area = Math.abs(signedArea(outline)) / 10_000;
@@ -156,16 +159,19 @@ export function ItemPanel({
   onAssign,
   warnings,
   limited,
+  materials,
 }: {
-  plan: Plan;
+  plan: SpacePlan;
   item: PlanItem;
-  commit: Commit;
+  commit: CommitSpace;
   onDuplicate: () => void;
   onDelete: () => void;
   onAssign: (guestId: string, seat: SeatRef | null) => void;
   warnings: Warning[];
   /** client view: only seat count and seat assignments */
   limited?: boolean;
+  /** plan material defaults; when given (staff), the details section is shown */
+  materials?: Materials;
 }) {
   const spec = KINDS[item.kind];
   const set = (patch: Partial<PlanItem>) => commit(updateItem(plan, item.id, patch));
@@ -225,7 +231,15 @@ export function ItemPanel({
           </div>
         )}
 
-        {!table && (
+        {!table && spec.round && (
+          <div className="mt-3 grid grid-cols-2 gap-2.5">
+            <Label text="Diâmetro">
+              <MetreInput cm={item.w} min={spec.minSize} max={spec.maxSize} onCommit={(d) => set({ w: d, h: d })} />
+            </Label>
+          </div>
+        )}
+
+        {!table && !spec.round && (
           <div className="mt-3 grid grid-cols-2 gap-2.5">
             <Label text="Comprimento">
               <MetreInput cm={item.w} min={spec.minSize} max={spec.maxSize} onCommit={(w) => set({ w })} />
@@ -277,11 +291,12 @@ export function ItemPanel({
       </Section>
 
       {table && <SeatsSection plan={plan} item={item} set={set} onAssign={onAssign} />}
+      {materials && <ItemDetailsSection item={item} materials={materials} onChange={(details) => set({ details })} />}
     </div>
   );
 }
 
-function SeatsSection({ plan, item, set, onAssign }: { plan: Plan; item: PlanItem; set: (p: Partial<PlanItem>) => void; onAssign: (guestId: string, seat: SeatRef | null) => void }) {
+function SeatsSection({ plan, item, set, onAssign }: { plan: SpacePlan; item: PlanItem; set: (p: Partial<PlanItem>) => void; onAssign: (guestId: string, seat: SeatRef | null) => void }) {
   const seated = guestsBySeat(plan.guests);
   const max = maxSeatsFor(item);
   const n = item.seats ?? 0;
@@ -373,11 +388,14 @@ export function GuestsPanel({
 
   const seatOptions = useMemo(() => {
     const seated = guestsBySeat(plan.guests);
+    const multi = plan.spaces.length > 1;
+    const spaceName = new Map(plan.spaces.map((sp) => [sp.id, sp.name]));
     return plan.items.filter(isTable).map((t) => ({
+      label: multi ? `${t.label} · ${spaceName.get(t.spaceId) ?? ""}` : t.label,
       table: t,
       seats: Array.from({ length: t.seats ?? 0 }, (_, i) => ({ index: i, occupant: seated.get(`${t.id}:${i}`) })),
     }));
-  }, [plan.guests, plan.items]);
+  }, [plan.guests, plan.items, plan.spaces]);
 
   function addGuests(raw: string) {
     if (!commit) return;
@@ -524,8 +542,8 @@ export function GuestsPanel({
                           }}
                         >
                           <option value="">Por sentar</option>
-                          {seatOptions.map(({ table, seats }) => (
-                            <optgroup key={table.id} label={table.label}>
+                          {seatOptions.map(({ table, label, seats }) => (
+                            <optgroup key={table.id} label={label}>
                               {seats.map(({ index, occupant }) => (
                                 <option key={index} value={`${table.id}:${index}`}>
                                   Lugar {index + 1}
@@ -616,6 +634,7 @@ export function TablesOverview({ plan, selectedId, onSelect }: { plan: Plan; sel
             <div className="flex items-baseline justify-between">
               <span className="font-serif-display text-[15px] font-medium">{t.label}</span>
               <span className="text-[11px] text-ink-faint">
+                {plan.spaces.length > 1 && `${plan.spaces.find((sp) => sp.id === t.spaceId)?.name ?? ""} · `}
                 {KINDS[t.kind].short} · {used}/{n}
               </span>
             </div>
